@@ -9,21 +9,85 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.2" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.0"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.2">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.2">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.1" />
     </ItemGroup>
 
     <ItemGroup>
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\App.DAL.EF\App.DAL.EF.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\Manufacturer\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Manufacturer\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Manufacturer\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Manufacturer\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Manufacturer\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Category\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Category\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Category\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Category\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Category\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Disc\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Disc\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Disc\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Disc\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Disc\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\DiscFromPage\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\DiscFromPage\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\DiscFromPage\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\DiscFromPage\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\DiscFromPage\Index.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Areas\Admin\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Views\Manufacturer\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Manufacturer\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Manufacturer\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Manufacturer\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Manufacturer\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Manufacturer\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Manufacturer\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Manufacturer\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Manufacturer\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Manufacturer\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Category\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Category\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Category\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Category\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Category\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\DiscFromPage\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\DiscFromPage\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\DiscFromPage\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\DiscFromPage\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\DiscFromPage\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Manufacturer\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Manufacturer\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Manufacturer\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Manufacturer\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Manufacturer\Index.cshtml" />
     </ItemGroup>
 
 </Project>
