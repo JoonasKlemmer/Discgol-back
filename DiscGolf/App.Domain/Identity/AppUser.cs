@@ -1,7 +1,9 @@
+using Base.Contracts.Domain;
 using Microsoft.AspNetCore.Identity;
 
 namespace App.Domain.Identity;
 
-public class AppUser : IdentityUser<Guid>
+public class AppUser : IdentityUser<Guid>, IDomainEntityId
 {
+    public ICollection<Wishlist>? Wishlists { get; set; }
 }

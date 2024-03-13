@@ -58,6 +58,11 @@
       <_ContentIncludedByDefault Remove="Views\DiscFromPage\Details.cshtml" />
       <_ContentIncludedByDefault Remove="Views\DiscFromPage\Edit.cshtml" />
       <_ContentIncludedByDefault Remove="Views\DiscFromPage\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Wishlist\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Wishlist\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Wishlist\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Wishlist\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Wishlist\Index.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
@@ -90,6 +95,11 @@
       <UpToDateCheckInput Remove="Views\Manufacturer\Details.cshtml" />
       <UpToDateCheckInput Remove="Views\Manufacturer\Edit.cshtml" />
       <UpToDateCheckInput Remove="Views\Manufacturer\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Wishlist\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Wishlist\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Wishlist\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Wishlist\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Wishlist\Index.cshtml" />
     </ItemGroup>
 
 </Project>

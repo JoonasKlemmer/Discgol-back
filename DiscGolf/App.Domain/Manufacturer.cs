@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using Base.Contracts.Domain;
 
 namespace App.Domain;
 
-public class Manufacturer
+public class Manufacturer : IDomainEntityId
 {
     public Guid Id { get; set; }
     

@@ -1,28 +1,29 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using App.Contracts.DAL.Repositories;
+using App.DAL.EF;
+using App.DAL.EF.Repositories;
+using App.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
-using App.Domain;
 
 namespace WebApp.Controllers
 {
     public class WishlistController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IWishlistRepository _repo;
 
         public WishlistController(AppDbContext context)
         {
             _context = context;
+            _repo = new WishlistRepository(context);
         }
 
         // GET: Wishlist
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Wishlist.ToListAsync());
+            var res = await _repo.GetAllAsync();
+            return View(res);
         }
 
         // GET: Wishlist/Details/5
@@ -33,8 +34,12 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var wishlist = await _context.Wishlist
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var wishlist = await _repo.FirstOrDefaultAsync(id.Value);
+            
+            /*var wishlist = await _context.Wishlist
+                .Include(w => w.AppUser)
+                .FirstOrDefaultAsync(m => m.Id == id);*/
+            
             if (wishlist == null)
             {
                 return NotFound();
@@ -46,6 +51,7 @@ namespace WebApp.Controllers
         // GET: Wishlist/Create
         public IActionResult Create()
         {
+            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
@@ -54,15 +60,19 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UsersId")] Wishlist wishlist)
+        public async Task<IActionResult> Create([Bind("WishlistName,UsersId,AppUserId,Id")] Wishlist wishlist)
         {
             if (ModelState.IsValid)
             {
-                wishlist.Id = Guid.NewGuid();
-                _context.Add(wishlist);
+                _repo.Add(wishlist);
+                
+                /*wishlist.Id = Guid.NewGuid();
+                _context.Add(wishlist); */
+                
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", wishlist.AppUserId);
             return View(wishlist);
         }
 
@@ -79,6 +89,7 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
+            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", wishlist.AppUserId);
             return View(wishlist);
         }
 
@@ -87,7 +98,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,UsersId")] Wishlist wishlist)
+        public async Task<IActionResult> Edit(Guid id, [Bind("WishlistName,UsersId,AppUserId,Id")] Wishlist wishlist)
         {
             if (id != wishlist.Id)
             {
@@ -114,6 +125,7 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", wishlist.AppUserId);
             return View(wishlist);
         }
 
@@ -126,6 +138,7 @@ namespace WebApp.Controllers
             }
 
             var wishlist = await _context.Wishlist
+                .Include(w => w.AppUser)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (wishlist == null)
             {

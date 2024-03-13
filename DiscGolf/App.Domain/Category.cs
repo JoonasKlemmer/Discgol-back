@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using Base.Contracts.Domain;
 
 namespace App.Domain;
 
-public class Category
+public class Category : IDomainEntityId
 {
     public Guid Id { get; set; }
     [MaxLength(64)]
