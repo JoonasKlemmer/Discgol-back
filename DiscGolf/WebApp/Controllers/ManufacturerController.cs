@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using App.Contracts.DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,17 +13,17 @@ namespace WebApp.Controllers
 {
     public class ManufacturerController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
         public ManufacturerController(AppDbContext context)
         {
-            _context = context;
+            _uow = new AppUOW(context);
         }
 
         // GET: Manufacturer
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Manufacturer.ToListAsync());
+            return View(await _uow.Manufacturers.GetAllAsync());
         }
 
         // GET: Manufacturer/Details/5
@@ -33,8 +34,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var manufacturer = await _context.Manufacturer
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var manufacturer = await _uow.Manufacturers
+                .FirstOrDefaultAsync(id.Value);
             if (manufacturer == null)
             {
                 return NotFound();
@@ -54,13 +55,13 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ManufacturerName,Location")] Manufacturer manufacturer)
+        public async Task<IActionResult> Create(Manufacturer manufacturer) //[Bind("Id,ManufacturerName,Location")] 
         {
             if (ModelState.IsValid)
             {
                 manufacturer.Id = Guid.NewGuid();
-                _context.Add(manufacturer);
-                await _context.SaveChangesAsync();
+                _uow.Manufacturers.Add(manufacturer);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(manufacturer);
@@ -74,7 +75,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var manufacturer = await _context.Manufacturer.FindAsync(id);
+            var manufacturer = await _uow.Manufacturers.FirstOrDefaultAsync(id.Value);
             if (manufacturer == null)
             {
                 return NotFound();
@@ -87,7 +88,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,ManufacturerName,Location")] Manufacturer manufacturer)
+        public async Task<IActionResult> Edit(Guid id, Manufacturer manufacturer) //[Bind("Id,ManufacturerName,Location")] 
         {
             if (id != manufacturer.Id)
             {
@@ -98,12 +99,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(manufacturer);
-                    await _context.SaveChangesAsync();
+                    _uow.Manufacturers.Update(manufacturer);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ManufacturerExists(manufacturer.Id))
+                    if (!await _uow.Manufacturers.ExistsAsync(manufacturer.Id))
                     {
                         return NotFound();
                     }
@@ -125,8 +126,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var manufacturer = await _context.Manufacturer
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var manufacturer = await _uow.Manufacturers
+                .FirstOrDefaultAsync(id.Value);
             if (manufacturer == null)
             {
                 return NotFound();
@@ -140,19 +141,11 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var manufacturer = await _context.Manufacturer.FindAsync(id);
-            if (manufacturer != null)
-            {
-                _context.Manufacturer.Remove(manufacturer);
-            }
-
-            await _context.SaveChangesAsync();
+            await _uow.Manufacturers.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ManufacturerExists(Guid id)
-        {
-            return _context.Manufacturer.Any(e => e.Id == id);
-        }
+
     }
 }

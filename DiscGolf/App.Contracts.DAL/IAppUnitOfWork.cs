@@ -1,0 +1,15 @@
+using App.Contracts.DAL.Repositories;
+using App.Domain.Identity;
+using Base.Contracts.DAL;
+
+namespace App.Contracts.DAL;
+
+public interface IAppUnitOfWork : IUnitOfWork
+{
+    // list your repos here
+
+    ICategoryRepository Categories { get; }
+    IManufacturerRepository Manufacturers { get; }
+    IWishlistRepository Wishlists { get; }
+    IEntityRepository<AppUser> Users { get; }
+}

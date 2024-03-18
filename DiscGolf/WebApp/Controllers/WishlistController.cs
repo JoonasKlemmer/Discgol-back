@@ -1,3 +1,4 @@
+using App.Contracts.DAL;
 using App.Contracts.DAL.Repositories;
 using App.DAL.EF;
 using App.DAL.EF.Repositories;
@@ -10,20 +11,19 @@ namespace WebApp.Controllers
 {
     public class WishlistController : Controller
     {
-        private readonly AppDbContext _context;
-        private readonly IWishlistRepository _repo;
+
+        private readonly IAppUnitOfWork _uow;
 
         public WishlistController(AppDbContext context)
         {
-            _context = context;
-            _repo = new WishlistRepository(context);
+
+            _uow = new AppUOW(context);
         }
 
         // GET: Wishlist
         public async Task<IActionResult> Index()
         {
-            var res = await _repo.GetAllAsync();
-            return View(res);
+            return View(await _uow.Wishlists.GetAllAsync());
         }
 
         // GET: Wishlist/Details/5
@@ -34,12 +34,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var wishlist = await _repo.FirstOrDefaultAsync(id.Value);
-            
-            /*var wishlist = await _context.Wishlist
-                .Include(w => w.AppUser)
-                .FirstOrDefaultAsync(m => m.Id == id);*/
-            
+            var wishlist = await _uow.Wishlists.FirstOrDefaultAsync(id.Value);
             if (wishlist == null)
             {
                 return NotFound();
@@ -49,9 +44,9 @@ namespace WebApp.Controllers
         }
 
         // GET: Wishlist/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["AppUserId"] = new SelectList(await _uow.Users.GetAllAsync(), "Id", "Id");
             return View();
         }
 
@@ -60,19 +55,16 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("WishlistName,UsersId,AppUserId,Id")] Wishlist wishlist)
+        public async Task<IActionResult> Create( Wishlist wishlist) //Bind("WishlistName,UsersId,AppUserId,Id")]
         {
             if (ModelState.IsValid)
             {
-                _repo.Add(wishlist);
-                
-                /*wishlist.Id = Guid.NewGuid();
-                _context.Add(wishlist); */
-                
-                await _context.SaveChangesAsync();
+                wishlist.Id = Guid.NewGuid();
+                _uow.Wishlists.Add(wishlist);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", wishlist.AppUserId);
+            ViewData["AppUserId"] = new SelectList(await _uow.Users.GetAllAsync(), "Id", "Id", wishlist.AppUserId);
             return View(wishlist);
         }
 
@@ -84,12 +76,12 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var wishlist = await _context.Wishlist.FindAsync(id);
+            var wishlist = await _uow.Wishlists.FirstOrDefaultAsync(id.Value);
             if (wishlist == null)
             {
                 return NotFound();
             }
-            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", wishlist.AppUserId);
+            ViewData["AppUserId"] = new SelectList(await _uow.Users.GetAllAsync(), "Id", "Id", wishlist.AppUserId);
             return View(wishlist);
         }
 
@@ -98,7 +90,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("WishlistName,UsersId,AppUserId,Id")] Wishlist wishlist)
+        public async Task<IActionResult> Edit(Guid id,Wishlist wishlist)// [Bind("WishlistName,UsersId,AppUserId,Id")] 
         {
             if (id != wishlist.Id)
             {
@@ -109,12 +101,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(wishlist);
-                    await _context.SaveChangesAsync();
+                    _uow.Wishlists.Update(wishlist);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!WishlistExists(wishlist.Id))
+                    if (!await _uow.Wishlists.ExistsAsync(wishlist.Id))
                     {
                         return NotFound();
                     }
@@ -125,7 +117,7 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", wishlist.AppUserId);
+            ViewData["AppUserId"] = new SelectList(await _uow.Users.GetAllAsync(), "Id", "Id", wishlist.AppUserId);
             return View(wishlist);
         }
 
@@ -137,9 +129,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var wishlist = await _context.Wishlist
-                .Include(w => w.AppUser)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var wishlist = await _uow.Wishlists
+                .FirstOrDefaultAsync(id.Value);
             if (wishlist == null)
             {
                 return NotFound();
@@ -153,19 +144,10 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var wishlist = await _context.Wishlist.FindAsync(id);
-            if (wishlist != null)
-            {
-                _context.Wishlist.Remove(wishlist);
-            }
-
-            await _context.SaveChangesAsync();
+            await _uow.Wishlists.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        private bool WishlistExists(Guid id)
-        {
-            return _context.Wishlist.Any(e => e.Id == id);
-        }
+        
     }
 }
