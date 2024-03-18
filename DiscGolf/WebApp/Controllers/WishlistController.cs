@@ -14,10 +14,10 @@ namespace WebApp.Controllers
 
         private readonly IAppUnitOfWork _uow;
 
-        public WishlistController(AppDbContext context)
+        public WishlistController(IAppUnitOfWork uow)
         {
 
-            _uow = new AppUOW(context);
+            _uow = uow;
         }
 
         // GET: Wishlist

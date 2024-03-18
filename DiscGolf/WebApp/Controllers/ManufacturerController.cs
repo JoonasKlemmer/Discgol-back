@@ -15,9 +15,9 @@ namespace WebApp.Controllers
     {
         private readonly IAppUnitOfWork _uow;
 
-        public ManufacturerController(AppDbContext context)
+        public ManufacturerController(IAppUnitOfWork uow)
         {
-            _uow = new AppUOW(context);
+            _uow = uow;
         }
 
         // GET: Manufacturer

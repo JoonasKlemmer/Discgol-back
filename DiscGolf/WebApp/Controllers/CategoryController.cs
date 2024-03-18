@@ -17,10 +17,10 @@ namespace WebApp.Controllers
 
         
 
-        public CategoryController(AppDbContext context)
+        public CategoryController(IAppUnitOfWork uow)
         {
 
-            _uow = new AppUOW(context);
+            _uow = uow;
         }
 
         // GET: Category
