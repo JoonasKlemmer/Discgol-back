@@ -28,7 +28,7 @@
                 @Html.DisplayFor(modelItem => item.WishlistName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AppUser!.Id)
+                @Html.DisplayFor(modelItem => item.AppUser!.Email)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

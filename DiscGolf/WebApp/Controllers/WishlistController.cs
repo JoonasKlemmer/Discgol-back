@@ -3,27 +3,33 @@ using App.Contracts.DAL.Repositories;
 using App.DAL.EF;
 using App.DAL.EF.Repositories;
 using App.Domain;
+using App.Domain.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.Controllers
 {
+    [Authorize]
     public class WishlistController : Controller
     {
 
         private readonly IAppUnitOfWork _uow;
-
-        public WishlistController(IAppUnitOfWork uow)
+        private readonly UserManager<AppUser> _userManager;
+        public WishlistController(IAppUnitOfWork uow, UserManager<AppUser> userManager)
         {
-
             _uow = uow;
+            _userManager = userManager;
         }
 
         // GET: Wishlist
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.Wishlists.GetAllAsync());
+            var userId = Guid.Parse(_userManager.GetUserId(User));
+            
+            return View(await _uow.Wishlists.GetAllAsync(userId));
         }
 
         // GET: Wishlist/Details/5
@@ -46,6 +52,7 @@ namespace WebApp.Controllers
         // GET: Wishlist/Create
         public async Task<IActionResult> Create()
         {
+            
             ViewData["AppUserId"] = new SelectList(await _uow.Users.GetAllAsync(), "Id", "Id");
             return View();
         }
