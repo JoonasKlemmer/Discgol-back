@@ -16,4 +16,5 @@ public class AppUser : IdentityUser<Guid>, IDomainEntityId
 
     
     public ICollection<Wishlist>? Wishlists { get; set; }
+    public ICollection<AppRefreshToken>? RefreshTokens { get; set; }
 }

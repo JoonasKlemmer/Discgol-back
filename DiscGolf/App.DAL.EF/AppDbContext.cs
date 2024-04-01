@@ -19,9 +19,26 @@ public class AppDbContext: IdentityDbContext<AppUser, AppRole, Guid, IdentityUse
     public DbSet<Website> Website { get; set; } = default!;
     public DbSet<Wishlist> Wishlist { get; set; } = default!;
     
+    public DbSet<AppRefreshToken> RefreshTokens { get; set; } = default!;
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
     {
     }
     
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+    {
+        foreach (var entity in ChangeTracker.Entries().Where(e => e.State != EntityState.Deleted))
+        {
+            foreach (var prop in entity
+                         .Properties
+                         .Where(x => x.Metadata.ClrType == typeof(DateTime)))
+            {
+                Console.WriteLine(prop);
+                prop.CurrentValue = ((DateTime) prop.CurrentValue).ToUniversalTime();
+            }
+        }
+
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
 }
