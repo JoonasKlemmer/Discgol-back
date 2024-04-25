@@ -1,8 +1,9 @@
 using App.Domain.Identity;
+using Base.Contracts.Domain;
 
 namespace App.Domain;
 
-public class DiscFromPage
+public class DiscFromPage : IDomainEntityId
 {
     public Guid Id { get; set; }
     

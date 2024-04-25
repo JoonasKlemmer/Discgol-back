@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using Base.Contracts.Domain;
 
 namespace App.Domain;
 
-public class Website
+public class Website : IDomainEntityId
 {
     public Guid Id { get; set; }
 

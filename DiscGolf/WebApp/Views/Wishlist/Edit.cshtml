@@ -1,4 +1,4 @@
-@model App.Domain.Wishlist
+@model App.DAL.DTO.Wishlist
 
 @{
     ViewData["Title"] = "Edit";
@@ -10,18 +10,14 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action=""> <!-- Edit -->
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="WishlistName" class="control-label"></label>
                 <input asp-for="WishlistName" class="form-control" />
                 <span asp-validation-for="WishlistName" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="AppUserId" class="control-label"></label>
-                <select asp-for="AppUserId" class="form-control" asp-items="ViewBag.AppUserId"></select>
-                <span asp-validation-for="AppUserId" class="text-danger"></span>
-            </div>
+            
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

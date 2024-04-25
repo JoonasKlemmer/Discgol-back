@@ -55,7 +55,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Manufacturer manufacturer) //[Bind("Id,ManufacturerName,Location")] 
+        public async Task<IActionResult> Create(App.DAL.DTO.Manufacturer manufacturer) //[Bind("Id,ManufacturerName,Location")] 
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +88,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Manufacturer manufacturer) //[Bind("Id,ManufacturerName,Location")] 
+        public async Task<IActionResult> Edit(Guid id, App.DAL.DTO.Manufacturer manufacturer) //[Bind("Id,ManufacturerName,Location")] 
         {
             if (id != manufacturer.Id)
             {

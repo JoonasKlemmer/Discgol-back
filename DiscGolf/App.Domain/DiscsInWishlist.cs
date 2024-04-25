@@ -1,6 +1,8 @@
+using Base.Contracts.Domain;
+
 namespace App.Domain;
 
-public class DiscsInWishlist
+public class DiscsInWishlist : IDomainEntityId
 {
     public Guid Id { get; set; }
     
