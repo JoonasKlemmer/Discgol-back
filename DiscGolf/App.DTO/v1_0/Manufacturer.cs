@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using App.Domain;
 
 
 namespace App.DTO.v1_0;

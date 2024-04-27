@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using App.Contracts.BLL;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
-using App.Domain;
 using App.Domain.Identity;
+using App.DTO.v1_0;
 using Asp.Versioning;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -43,7 +38,7 @@ namespace WebApp.ApiControllers
 
         // GET: api/Wishlist
         [HttpGet]
-        [ProducesResponseType<IEnumerable<App.BLL.DTO.Wishlist>>((int) HttpStatusCode.OK)]
+        [ProducesResponseType<IEnumerable<App.DTO.v1_0.Wishlist>>((int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.Unauthorized)]
         [Produces("application/json")]
         [Consumes("application/json")]
@@ -75,7 +70,7 @@ namespace WebApp.ApiControllers
                 return NotFound();
             }
 
-            return wishlist;
+            return Ok(wishlist);
         }
 
         // PUT: api/Wishlist/5
@@ -124,7 +119,8 @@ namespace WebApp.ApiControllers
 
         public async Task<ActionResult<Wishlist>> PostWishlist(Wishlist wishlist)
         {
-            _context.Wishlist.Add(wishlist);
+            //_context.Wishlist.Add(wishlist);
+            _bll.Wishlists.Add(_mapper.Map(wishlist)!);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetWishlist", new

@@ -25,12 +25,10 @@ public class AppBLL : BaseBLL<AppDbContext>, IAppBLL
     
     private IDiscService? _discs;
     public IDiscService Discs => _discs ?? new DiscService(_uow, _uow.Discs, _mapper);
-    
-    private IDiscFromPageService? _discsFromPages;
-    public IDiscFromPageService DiscFromPage =>
-        _discsFromPages ?? new DiscFromPageService(_uow, _uow.DiscFromPages, _mapper);
-    
-    
+
+    public IDiscFromPageService? _discFromPages;
+    public IDiscFromPageService DiscFromPages => _discFromPages ?? new DiscFromPageService(_uow, _uow.DiscFromPages, _mapper);
+
     private IDiscsInWishlistService? _discsInWishlists;
     public IDiscsInWishlistService DiscsInWishlists =>
         _discsInWishlists ?? new DiscsInWishlistService(_uow, _uow.DiscsInWishlists, _mapper);

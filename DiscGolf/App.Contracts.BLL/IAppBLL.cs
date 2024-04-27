@@ -6,7 +6,12 @@ namespace App.Contracts.BLL;
 public interface IAppBLL : IBLL
 {
     
-    IWishlistService Wishlists { get; }
     ICategoryService Categories { get; }
+    IDiscService Discs { get; }
+    IDiscFromPageService DiscFromPages { get; }
+    IDiscsInWishlistService DiscsInWishlists { get; }
     IManufacturerService Manufacturers { get; }
+    IPriceService Prices { get; }
+    IWebsiteService Websites { get; }
+    IWishlistService Wishlists { get; }
 }

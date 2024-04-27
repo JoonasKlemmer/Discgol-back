@@ -12,4 +12,5 @@ public interface ICategoryRepository : IEntityRepository<DALDTO.Category>, ICate
 public interface ICategoryRepositoryCustom<TEntity>
 {
     Task<IEnumerable<TEntity>> GetAllSortedAsync(Guid userId);
+
 }

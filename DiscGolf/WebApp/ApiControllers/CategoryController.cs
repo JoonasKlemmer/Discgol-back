@@ -1,14 +1,11 @@
-
 using System.ComponentModel;
-
 using System.Net;
-
 using App.Contracts.BLL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
-using App.Domain;
 using App.Domain.Identity;
+using App.DTO.v1_0;
 using Asp.Versioning;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
@@ -39,17 +36,13 @@ namespace WebApp.ApiControllers
 
         // GET: api/Category
         [HttpGet]
-        [ProducesResponseType<IEnumerable<App.BLL.DTO.Category>>((int) HttpStatusCode.OK)]
+        [ProducesResponseType<IEnumerable<App.DTO.v1_0.Category>>((int) HttpStatusCode.OK)]
         [Produces("application/json")]
         [Consumes("application/json")]
 
         public async Task<ActionResult<IEnumerable<App.DTO.v1_0.Category>>> GetCategory()
         {
-            var res = (await _bll.Categories.GetAllSortedAsync(
-                    Guid.Parse(_userManager.GetUserId(User))
-                ))
-                .Select(e => _mapper.Map(e))
-                .ToList();
+            var res = await _bll.Categories.GetAllAsync();
             return Ok(res);
 
         }
@@ -63,14 +56,17 @@ namespace WebApp.ApiControllers
 
         public async Task<ActionResult<Category>> GetCategory(Guid id)
         {
-            var category = await _context.Category.FindAsync(id);
+            
+             var category = await _bll.Categories.FirstOrDefaultAsync(id);
 
             if (category == null)
             {
                 return NotFound();
             }
 
-            return category;
+            return Ok(category);
+             
+            
         }
 
         // PUT: api/Category/5
@@ -119,7 +115,7 @@ namespace WebApp.ApiControllers
 
         public async Task<ActionResult<Category>> PostCategory(Category category)
         {
-            _context.Category.Add(category);
+            _bll.Categories.Add(_mapper.Map(category)!);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetCategory", new

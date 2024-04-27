@@ -1,19 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using App.Contracts.BLL;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
-using App.Domain;
 using App.Domain.Identity;
+using App.DTO.v1_0;
 using Asp.Versioning;
 using AutoMapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using WebApp.Helpers;
 
@@ -39,17 +32,13 @@ namespace WebApp.ApiControllers
 
         // GET: api/Manufacturer
         [HttpGet]
-        [ProducesResponseType<IEnumerable<App.BLL.DTO.Manufacturer>>((int) HttpStatusCode.OK)]
+        [ProducesResponseType<IEnumerable<App.DTO.v1_0.Manufacturer>>((int) HttpStatusCode.OK)]
         [Produces("application/json")]
         [Consumes("application/json")]
 
         public async Task<ActionResult<IEnumerable<App.DTO.v1_0.Manufacturer>>> GetManufacturer()
         {
-            var res = (await _bll.Manufacturers.GetAllSortedAsync(
-                    Guid.Parse(_userManager.GetUserId(User))
-                ))
-                .Select(e => _mapper.Map(e))
-                .ToList();
+            var res = await _bll.Manufacturers.GetAllAsync();
             return Ok(res);
         }
 
@@ -62,6 +51,24 @@ namespace WebApp.ApiControllers
 
         public async Task<ActionResult<Manufacturer>> GetManufacturer(Guid id)
         {
+            
+            /*
+             App.DTO.v1_0.Manufacturer
+              if (id == null)
+            {
+                return NotFound();
+            }
+
+            var manufacturer = await _bll.Manufacturers
+                .FirstOrDefaultAsync(id);
+            if (manufacturer == null)
+            {
+                return NotFound();
+            }
+
+
+            return Ok(manufacturer);
+             */
             var manufacturer = await _context.Manufacturer.FindAsync(id);
 
             if (manufacturer == null)
@@ -69,7 +76,7 @@ namespace WebApp.ApiControllers
                 return NotFound();
             }
 
-            return manufacturer;
+            return Ok(manufacturer);
         }
 
         // PUT: api/Manufacturer/5
@@ -118,7 +125,8 @@ namespace WebApp.ApiControllers
 
         public async Task<ActionResult<Manufacturer>> PostManufacturer(Manufacturer manufacturer)
         {
-            _context.Manufacturer.Add(manufacturer);
+            //_context.Manufacturer.Add(manufacturer);
+            _bll.Manufacturers.Add(_mapper.Map(manufacturer)!);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetManufacturer", new

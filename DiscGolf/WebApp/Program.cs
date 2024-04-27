@@ -1,5 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using App.BLL;
+using App.Contracts.BLL;
 using App.Contracts.DAL;
 using App.DAL.EF;
 using App.Domain.Identity;
@@ -24,6 +26,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 
 builder.Services.AddScoped<IAppUnitOfWork, AppUOW>();
+builder.Services.AddScoped<IAppBLL, AppBLL>();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
