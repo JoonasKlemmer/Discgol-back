@@ -11,4 +11,6 @@ public interface IDiscRepository : IEntityRepository<DALDTO.Disc>, IDiscReposito
 public interface IDiscRepositoryCustom<TEntity>
 {
     Task<IEnumerable<TEntity>> GetAllSortedAsync(Guid userId);
+
+    Task<IEnumerable<TEntity>> GetByName(string name);
 }

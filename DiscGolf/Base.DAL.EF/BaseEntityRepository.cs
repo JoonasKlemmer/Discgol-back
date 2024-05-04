@@ -94,7 +94,7 @@ public class BaseEntityRepository<TKey, TDomainEntity, TDalEntity, TDbContext>
             .ExecuteDelete();
     }
 
-
+    
     public virtual IEnumerable<TDalEntity> GetAll(TKey userId = default, bool noTracking = true)
     {
         return CreateQuery(userId, noTracking).ToList().Select(de => Mapper.Map(de));

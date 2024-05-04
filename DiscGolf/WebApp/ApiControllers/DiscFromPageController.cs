@@ -1,108 +1,43 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
 using App.Domain;
+using Asp.Versioning;
+using AutoMapper;
+using WebApp.Helpers;
 
 namespace WebApp.ApiControllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")]
     [ApiController]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class DiscFromPageController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppBLL _bll;
+        private readonly PublicDTOBllMapper<App.DTO.v1_0.DiscFromPage, App.BLL.DTO.DiscFromPage> _mapper;
 
-        public DiscFromPageController(AppDbContext context)
+        public DiscFromPageController(IAppBLL bll,  IMapper autoMapper)
         {
-            _context = context;
+            _bll = bll;
+            _mapper = new PublicDTOBllMapper<App.DTO.v1_0.DiscFromPage, App.BLL.DTO.DiscFromPage>(autoMapper);
         }
 
         // GET: api/DiscFromPage
         [HttpGet]
+        [ProducesResponseType<IEnumerable<App.DTO.v1_0.DiscFromPage>>((int) HttpStatusCode.OK)]
+        [Produces("application/json")]
+        [Consumes("application/json")]
         public async Task<ActionResult<IEnumerable<DiscFromPage>>> GetDiscsFromPage()
         {
-            return await _context.DiscsFromPage.ToListAsync();
-        }
-
-        // GET: api/DiscFromPage/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<DiscFromPage>> GetDiscFromPage(Guid id)
-        {
-            var discFromPage = await _context.DiscsFromPage.FindAsync(id);
-
-            if (discFromPage == null)
-            {
-                return NotFound();
-            }
-
-            return discFromPage;
-        }
-
-        // PUT: api/DiscFromPage/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutDiscFromPage(Guid id, DiscFromPage discFromPage)
-        {
-            if (id != discFromPage.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(discFromPage).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DiscFromPageExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/DiscFromPage
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<DiscFromPage>> PostDiscFromPage(DiscFromPage discFromPage)
-        {
-            _context.DiscsFromPage.Add(discFromPage);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetDiscFromPage", new { id = discFromPage.Id }, discFromPage);
-        }
-
-        // DELETE: api/DiscFromPage/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDiscFromPage(Guid id)
-        {
-            var discFromPage = await _context.DiscsFromPage.FindAsync(id);
-            if (discFromPage == null)
-            {
-                return NotFound();
-            }
-
-            _context.DiscsFromPage.Remove(discFromPage);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool DiscFromPageExists(Guid id)
-        {
-            return _context.DiscsFromPage.Any(e => e.Id == id);
+            var res = await _bll.DiscFromPages.GetAllAsync();
+            return Ok(res);
         }
     }
 }

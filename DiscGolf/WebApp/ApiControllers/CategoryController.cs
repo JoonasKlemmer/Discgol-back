@@ -13,23 +13,23 @@ using WebApp.Helpers;
 
 namespace WebApp.ApiControllers
 {
-    
+    /// <summary>
+    /// Controller for possible category of discs
+    /// 
+    /// </summary>
     [ApiVersion("1.0")]
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class CategoryController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        //private readonly AppDbContext _context;
         private readonly IAppBLL _bll;
-        private readonly UserManager<AppUser> _userManager;
         private readonly PublicDTOBllMapper<App.DTO.v1_0.Category, App.BLL.DTO.Category> _mapper;
 
 
-        public CategoryController(AppDbContext context, IAppBLL bll, UserManager<AppUser> userManager,  IMapper autoMapper)
+        public CategoryController(IAppBLL bll,  IMapper autoMapper)
         {
-            _context = context;
             _bll = bll;
-            _userManager = userManager;
             _mapper = new PublicDTOBllMapper<App.DTO.v1_0.Category, App.BLL.DTO.Category>(autoMapper);
 
         }
@@ -85,11 +85,11 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
 
-            _context.Entry(category).State = EntityState.Modified;
+            _bll.Categories.Update(_mapper.Map(category)!);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _bll.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -116,7 +116,7 @@ namespace WebApp.ApiControllers
         public async Task<ActionResult<Category>> PostCategory(Category category)
         {
             _bll.Categories.Add(_mapper.Map(category)!);
-            await _context.SaveChangesAsync();
+            await _bll.SaveChangesAsync();
 
             return CreatedAtAction("GetCategory", new
             {
@@ -134,21 +134,21 @@ namespace WebApp.ApiControllers
 
         public async Task<IActionResult> DeleteCategory(Guid id)
         {
-            var category = await _context.Category.FindAsync(id);
+            var category = await _bll.Categories.FirstOrDefaultAsync(id);
             if (category == null)
             {
                 return NotFound();
             }
 
-            _context.Category.Remove(category);
-            await _context.SaveChangesAsync();
+            await _bll.Categories.RemoveAsync(category);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
         private bool CategoryExists(Guid id)
         {
-            return _context.Category.Any(e => e.Id == id);
+            return _bll.Categories.Exists(id);
         }
     }
 }

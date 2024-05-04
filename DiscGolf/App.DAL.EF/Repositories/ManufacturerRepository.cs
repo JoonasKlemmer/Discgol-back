@@ -21,7 +21,7 @@ public class ManufacturerRepository : BaseEntityRepository<APPDomain.Manufacture
         var res = await query.ToListAsync();
         return res.Select(e => Mapper.Map(e));
     }
-
     
+
     // implement your custom methods here
 }

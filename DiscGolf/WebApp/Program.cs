@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using System.Text.Json.Serialization;
 using App.BLL;
 using App.Contracts.BLL;
 using App.Contracts.DAL;
@@ -17,7 +18,7 @@ using WebApp;
 
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options => options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                        throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -65,12 +66,15 @@ builder.Services
 
 
 builder.Services.AddControllersWithViews();
-
+	
+builder.Services.AddControllers().AddJsonOptions(x =>
+    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 // reference any class from class library to be scanned for mapper configurations
 builder.Services.AddAutoMapper(
     typeof(App.DAL.EF.AutoMapperProfile),
-    typeof(App.BLL.AutoMapperProfile)
+    typeof(App.BLL.AutoMapperProfile),
+    typeof(WebApp.Helpers.AutoMapperProfile)
 );
 
 var apiVersioningBuilder = builder.Services.AddApiVersioning(options =>
@@ -153,6 +157,7 @@ static void SetupAppData(WebApplication app)
 
     using var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
     using var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
+    
 
     var res = roleManager.CreateAsync(new AppRole()
     {

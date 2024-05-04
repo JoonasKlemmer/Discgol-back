@@ -12,4 +12,5 @@ public interface IManufacturerRepository : IEntityRepository<DALDTO.Manufacturer
 public interface IManufacturerRepositoryCustom<TEntity>
 {
     Task<IEnumerable<TEntity>> GetAllSortedAsync(Guid userId);
+
 }

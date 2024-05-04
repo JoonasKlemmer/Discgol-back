@@ -22,6 +22,16 @@ public class DiscRepository : BaseEntityRepository<APPDomain.Disc, DALDTO.Disc, 
         return res.Select(e => Mapper.Map(e));
     }
 
+    public async Task<IEnumerable<DALDTO.Disc>> GetByName(string name)
+    {
+        var query = CreateQuery();
+        query = query.Include(d => d.Categories).Include(d => d.Manufacturer);
+        var res = await query.ToListAsync();
+        return res.Select(e => Mapper.Map(e));
+        
+    }
+    
+
     
     // implement your custom methods here
 }

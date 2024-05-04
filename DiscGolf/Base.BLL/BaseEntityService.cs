@@ -69,10 +69,12 @@ public class BaseEntityService<TDalEntity, TBllEntity, TRepository, TKey> : IEnt
         throw new NotImplementedException();
     }
 
-    public Task<TBllEntity?> FirstOrDefaultAsync(TKey id, TKey? userId = default, bool noTracking = true)
+    public async Task<TBllEntity?> FirstOrDefaultAsync(TKey id, TKey? userId = default, bool noTracking = true)
     {
-        throw new NotImplementedException();
+        var entity = await Repository.FirstOrDefaultAsync(id, userId, noTracking);
+        return Mapper.Map(entity);
     }
+    
 
     public async Task<IEnumerable<TBllEntity>> GetAllAsync(TKey? userId = default, bool noTracking = true)
     {
