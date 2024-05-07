@@ -14,5 +14,6 @@ public class AutoMapperProfile: Profile
         CreateMap<App.BLL.DTO.Price, App.DTO.v1_0.Price>().ReverseMap();
         CreateMap<App.BLL.DTO.Website, App.DTO.v1_0.Website>().ReverseMap();
         CreateMap<App.BLL.DTO.Wishlist, App.DTO.v1_0.Wishlist>().ReverseMap();
+        CreateMap<App.BLL.DTO.DiscWithDetails, App.DTO.v1_0.DiscWithDetails>().ReverseMap();
     }
 }

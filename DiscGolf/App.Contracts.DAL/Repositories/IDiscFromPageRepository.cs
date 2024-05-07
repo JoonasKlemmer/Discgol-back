@@ -1,3 +1,4 @@
+
 using Base.Contracts.DAL;
 using DALDTO = App.DAL.DTO;
 namespace App.Contracts.DAL.Repositories;
@@ -11,4 +12,9 @@ public interface IDiscFromPageRepository : IEntityRepository<DALDTO.DiscFromPage
 public interface IDiscFromPageRepositoryCustom<TEntity>
 {
     Task<IEnumerable<TEntity>> GetAllSortedAsync(Guid userId);
+    Task<IEnumerable<TEntity>> GetAllWithDetails();
+    Task<IEnumerable<TEntity>> GetAllWithDetailsByName(string discName);
+
+    Task<List<App.BLL.DTO.DiscWithDetails>> GetAllDiscData(List<App.BLL.DTO.DiscFromPage> listOfDiscs);
+    //List<App.BLL.DTO.DiscFromPage> listOfDiscs
 }

@@ -1,3 +1,4 @@
+using App.BLL.DTO;
 using DALDTO = App.DAL.DTO;
 using Base.Contracts.DAL;
 

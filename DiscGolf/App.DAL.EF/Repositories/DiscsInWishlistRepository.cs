@@ -21,7 +21,6 @@ public class DiscsInWishlistRepository : BaseEntityRepository<APPDomain.DiscsInW
         var res = await query.ToListAsync();
         return res.Select(e => Mapper.Map(e));
     }
-
     
     // implement your custom methods here
 }

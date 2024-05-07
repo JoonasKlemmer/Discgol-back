@@ -1,3 +1,4 @@
+using App.BLL.DTO;
 using App.Contracts.DAL.Repositories;
 using AutoMapper;
 using APPDomain = App.Domain;

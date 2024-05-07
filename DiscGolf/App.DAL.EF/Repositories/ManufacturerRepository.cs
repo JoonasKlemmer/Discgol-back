@@ -1,3 +1,4 @@
+using App.BLL.DTO;
 using App.Contracts.DAL.Repositories;
 using AutoMapper;
 using APPDomain = App.Domain;
@@ -21,7 +22,15 @@ public class ManufacturerRepository : BaseEntityRepository<APPDomain.Manufacture
         var res = await query.ToListAsync();
         return res.Select(e => Mapper.Map(e));
     }
+
+    public async Task<IEnumerable<DALDTO.Manufacturer>> GetAllManufacturers()
+    {
+        var query = CreateQuery();
+        var res = await query.ToListAsync();
     
+        return res.Select(e => Mapper.Map(e));
+    }
+
 
     // implement your custom methods here
 }

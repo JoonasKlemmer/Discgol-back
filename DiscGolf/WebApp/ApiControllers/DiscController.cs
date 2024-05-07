@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using WebApp.Helpers;
 using WebApp.Models;
 using JsonSerializer = System.Text.Json.JsonSerializer;
+using Manufacturer = App.DAL.DTO.Manufacturer;
 
 namespace WebApp.ApiControllers
 {
@@ -27,6 +28,8 @@ namespace WebApp.ApiControllers
         private readonly PublicDTOBllMapper<App.DTO.v1_0.Category, App.BLL.DTO.Category> _categoryMapper;
         private readonly PublicDTOBllMapper<App.DTO.v1_0.Manufacturer, App.BLL.DTO.Manufacturer> _manufacturerMapper;
         private readonly PublicDTOBllMapper<App.DTO.v1_0.DiscFromPage, App.BLL.DTO.DiscFromPage> _pageMapper;
+        private readonly PublicDTOBllMapper<App.DTO.v1_0.Website, App.BLL.DTO.Website> _websiteMapper;
+        private readonly PublicDTOBllMapper<App.DTO.v1_0.DiscWithDetails, App.BLL.DTO.DiscWithDetails>_discWithDetailsMapper ;
 
         public DiscController(IAppBLL bll,  IMapper autoMapper)
         {
@@ -36,66 +39,25 @@ namespace WebApp.ApiControllers
             _categoryMapper = new PublicDTOBllMapper<App.DTO.v1_0.Category, App.BLL.DTO.Category>(autoMapper);
             _manufacturerMapper = new PublicDTOBllMapper<App.DTO.v1_0.Manufacturer, App.BLL.DTO.Manufacturer>(autoMapper);
             _pageMapper = new PublicDTOBllMapper<App.DTO.v1_0.DiscFromPage, App.BLL.DTO.DiscFromPage>(autoMapper);
+            _websiteMapper = new PublicDTOBllMapper<App.DTO.v1_0.Website, App.BLL.DTO.Website>(autoMapper);
+            _discWithDetailsMapper = new PublicDTOBllMapper<App.DTO.v1_0.DiscWithDetails, App.BLL.DTO.DiscWithDetails>(autoMapper);
             
         }
 
         // GET: api/Disc
-        public async Task<string> GetDisc()
+        [HttpGet]
+        [ProducesResponseType<CategoryAttribute>((int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        public async Task<ActionResult<List<App.DTO.v1_0.DiscWithDetails>>> GetDisc()
         {
-            var manufacturers = await GetManufacturers();
-            var categories = await GetCategories();
-            var discFromPages = await GetDiscFromPage();
-            var discWd = new List<DiscWithDetails>();
-            foreach (var disc in discFromPages)
-            {
-                var currentDisc = await _bll.Discs.FirstOrDefaultAsync(disc.DiscId);
-                var res = await _bll.Websites.FirstOrDefaultAsync(disc.WebsiteId);
-                var discWithDetails = new DiscWithDetails
-                {
-                    DiscName = currentDisc!.Name,
-                    Speed = currentDisc.Speed,
-                    Glide = currentDisc.Glide,
-                    Turn = currentDisc.Turn,
-                    Fade = currentDisc.Fade,
-                    ManufacturerName = manufacturers.FirstOrDefault(m => m.Id == currentDisc!.ManufacturerId)!.ManufacturerName,
-                    CategoryName = categories.FirstOrDefault(c => c.Id == currentDisc!.CategoryId)!.CategoryName,
-                    DiscPrice = disc.Price,
-                    PageUrl = res!.Url
-                };
-                discWd.Add(discWithDetails);
-
-            }
-    
-            var dto = new SearchModel
-            {
-                DiscWithDetails = discWd
-            };
-            return JsonSerializer.Serialize(dto);
+            
+            var bllDiscs = (await _bll.DiscFromPages.GetAllWithDetails()).ToList();
+            var res = await _bll.DiscFromPages.GetAllDiscData(bllDiscs);
+            var result = res.Select(e => _discWithDetailsMapper.Map(e)).ToList();
+            return Ok(result);
         }
-        
-        private async Task<List<Manufacturer>> GetManufacturers()
-        {
-            var res = await _bll.Manufacturers.GetAllAsync();
-            var mappedManufacturers = res.Select(d => _manufacturerMapper.Map(d)).ToList();
-
-            return mappedManufacturers!;
-        }
-        
-        private async Task<List<Category>> GetCategories()
-        {
-            var res = await _bll.Categories.GetAllAsync();
-            var mappedCategories = res.Select(d => _categoryMapper.Map(d)).ToList();
-            return mappedCategories!;
-        }
-        
-        private async Task<List<DiscFromPage>> GetDiscFromPage()
-        {
-            var res = await _bll.DiscFromPages.GetAllAsync();
-            var mappedPages = res.Select(d => _pageMapper.Map(d)).ToList();
-            return mappedPages!;
-        }
-
-
         // GET: api/Disc/5
         [HttpGet("{name}")]
         [ProducesResponseType<CategoryAttribute>((int) HttpStatusCode.OK)]

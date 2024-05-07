@@ -1,3 +1,4 @@
+using App.BLL.DTO;
 using DALDTO = App.DAL.DTO;
 using Base.Contracts.DAL;
 
@@ -12,5 +13,5 @@ public interface IManufacturerRepository : IEntityRepository<DALDTO.Manufacturer
 public interface IManufacturerRepositoryCustom<TEntity>
 {
     Task<IEnumerable<TEntity>> GetAllSortedAsync(Guid userId);
-
+    Task<IEnumerable<DALDTO.Manufacturer>> GetAllManufacturers();
 }
