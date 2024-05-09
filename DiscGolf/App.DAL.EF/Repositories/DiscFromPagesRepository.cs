@@ -54,11 +54,4 @@ public class DiscFromPagesRepository : BaseEntityRepository<APPDomain.DiscFromPa
         var res = await query.ToListAsync();
         return res.Select(e => Mapper.Map(e))!;
     }
-
-    
-    public Task<List<App.BLL.DTO.DiscWithDetails>> GetAllDiscData(List<App.BLL.DTO.DiscFromPage> listOfDiscs)
-    {
-        return Task.FromResult<List<DiscWithDetails>>([]);
-    }
-    //List<App.BLL.DTO.DiscFromPage> listOfDiscs
 }

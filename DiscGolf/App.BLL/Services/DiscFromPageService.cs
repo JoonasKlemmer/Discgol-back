@@ -13,16 +13,9 @@ public class DiscFromPageService :
     BaseEntityService<App.DAL.DTO.DiscFromPage, App.BLL.DTO.DiscFromPage, IDiscFromPageRepository>,
     IDiscFromPageService
 {
-    private readonly IMapper _mapperForDiscWithDetails;
     public DiscFromPageService(IUnitOfWork uoW, IDiscFromPageRepository repository, IMapper mapper) : base(uoW,
         repository, new BllDalMapper<App.DAL.DTO.DiscFromPage, App.BLL.DTO.DiscFromPage>(mapper))
     {
-        var configForDiscWithDetails = new MapperConfiguration(cfg =>
-        {
-            cfg.CreateMap<App.DAL.DTO.DiscWithDetails, App.BLL.DTO.DiscWithDetails>();
-        });
-
-        _mapperForDiscWithDetails = configForDiscWithDetails.CreateMapper();
     }
 
     public async Task<IEnumerable<DiscFromPage>> GetAllSortedAsync(Guid userId)
@@ -41,7 +34,6 @@ public class DiscFromPageService :
     public async Task<List<App.BLL.DTO.DiscWithDetails>> GetAllDiscData(List<App.BLL.DTO.DiscFromPage> discFromPages)
     {
         var dwdMapper = new DiscWithDetailsMapper();
-        //var discFromPages = await GetAllWithDetails();
         var result = discFromPages.ToList();
         var discWd = new List<App.BLL.DTO.DiscWithDetails>();
         foreach (var discFromPage in result)
@@ -58,6 +50,6 @@ public class DiscFromPageService :
             discWd.Add(res);
             
         }
-        return discWd;
+        return discWd; 
     }
 }

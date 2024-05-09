@@ -15,6 +15,4 @@ public interface IDiscFromPageRepositoryCustom<TEntity>
     Task<IEnumerable<TEntity>> GetAllWithDetails();
     Task<IEnumerable<TEntity>> GetAllWithDetailsByName(string discName);
 
-    Task<List<App.BLL.DTO.DiscWithDetails>> GetAllDiscData(List<App.BLL.DTO.DiscFromPage> listOfDiscs);
-    //List<App.BLL.DTO.DiscFromPage> listOfDiscs
 }
