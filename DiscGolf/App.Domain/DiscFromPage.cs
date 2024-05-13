@@ -19,5 +19,7 @@ public class DiscFromPage : IDomainEntityId
     public Guid PriceId { get; set; }
     public Price? PriceValue { get; set; }
     
+    public ICollection<DiscsInWishlist>? DiscsInWishlists { get; set; }
+    
 
 }

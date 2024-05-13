@@ -13,7 +13,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Discs)
+                @Html.DisplayNameFor(model => model.DiscFromPage)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Wishlists)
@@ -25,10 +25,10 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Discs!.Name)
+                @Html.DisplayFor(modelItem => item.DiscFromPage!)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Wishlists!.Id)
+                @Html.DisplayFor(modelItem => item.Wishlists!.WishlistName)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

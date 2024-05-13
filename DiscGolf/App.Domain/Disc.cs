@@ -24,6 +24,6 @@ public class Disc : IDomainEntityId
     
     
     public ICollection<DiscFromPage>? DiscsFromPages { get; set; }
-    public ICollection<DiscsInWishlist>? DiscsInWishlists { get; set; }
+    //public ICollection<DiscsInWishlist>? DiscsInWishlists { get; set; }
 
 }

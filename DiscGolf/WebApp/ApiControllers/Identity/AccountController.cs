@@ -88,6 +88,7 @@ public class AccountController : ControllerBase
         };
         refreshToken.AppUser = appUser;
 
+
         var result = await _userManager.CreateAsync(appUser, registrationData.Password);
         if (!result.Succeeded)
         {
@@ -99,7 +100,7 @@ public class AccountController : ControllerBase
                 }
             );
         }
-
+        
         // save into claims also the user full name
         result = await _userManager.AddClaimsAsync(appUser, new List<Claim>()
         {
@@ -189,10 +190,13 @@ public class AccountController : ControllerBase
             return NotFound("User/Password problem");
         }
 
-        var deletedRows = await _context.RefreshTokens
-            .Where(t => t.AppUserId == appUser.Id && t.ExpirationDT < DateTime.UtcNow)
-            .ExecuteDeleteAsync();
-        _logger.LogInformation("Deleted {} refresh tokens", deletedRows);
+        if (!_context.Database.ProviderName!.Contains("InMemory"))
+        {
+            var deletedRows = await _context.RefreshTokens
+                .Where(t => t.AppUserId == appUser.Id && t.ExpirationDT < DateTime.UtcNow)
+                .ExecuteDeleteAsync();
+            _logger.LogInformation("Deleted {} refresh tokens", deletedRows);
+        }
 
         var refreshToken = new AppRefreshToken()
         {

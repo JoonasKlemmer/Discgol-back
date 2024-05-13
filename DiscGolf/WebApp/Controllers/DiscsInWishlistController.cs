@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
 using App.Domain;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
 {
+    
     public class DiscsInWishlistController : Controller
     {
         private readonly AppDbContext _context;
@@ -22,7 +25,7 @@ namespace WebApp.Controllers
         // GET: DiscsInWishlist
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.DiscInWishlist.Include(d => d.Discs).Include(d => d.Wishlists);
+            var appDbContext = _context.DiscInWishlist.Include(d => d.DiscFromPage).Include(d => d.Wishlists);
             return View(await appDbContext.ToListAsync());
         }
 
@@ -35,7 +38,7 @@ namespace WebApp.Controllers
             }
 
             var discsInWishlist = await _context.DiscInWishlist
-                .Include(d => d.Discs)
+                .Include(d => d.DiscFromPage)
                 .Include(d => d.Wishlists)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (discsInWishlist == null)
@@ -49,8 +52,8 @@ namespace WebApp.Controllers
         // GET: DiscsInWishlist/Create
         public IActionResult Create()
         {
-            ViewData["DiscId"] = new SelectList(_context.Disc, "Id", "Name");
-            ViewData["WishlistId"] = new SelectList(_context.Wishlist, "Id", "Id");
+            ViewData["DiscFromPageId"] = new SelectList(_context.DiscsFromPage, "Id", "Id");
+            ViewData["WishlistId"] = new SelectList(_context.Wishlist, "Id", "WishlistName");
             return View();
         }
 
@@ -59,7 +62,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DiscId,WishlistId")] DiscsInWishlist discsInWishlist)
+        public async Task<IActionResult> Create([Bind("Id,DiscFromPageId,WishlistId")] DiscsInWishlist discsInWishlist)
         {
             if (ModelState.IsValid)
             {
@@ -68,8 +71,8 @@ namespace WebApp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DiscId"] = new SelectList(_context.Disc, "Id", "Name", discsInWishlist.DiscId);
-            ViewData["WishlistId"] = new SelectList(_context.Wishlist, "Id", "Id", discsInWishlist.WishlistId);
+            ViewData["DiscFromPageId"] = new SelectList(_context.DiscsFromPage, "Id", "Id", discsInWishlist.DiscFromPageId);
+            ViewData["WishlistId"] = new SelectList(_context.Wishlist, "Id", "WishlistName", discsInWishlist.WishlistId);
             return View(discsInWishlist);
         }
 
@@ -86,8 +89,8 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["DiscId"] = new SelectList(_context.Disc, "Id", "Name", discsInWishlist.DiscId);
-            ViewData["WishlistId"] = new SelectList(_context.Wishlist, "Id", "Id", discsInWishlist.WishlistId);
+            ViewData["DiscFromPageId"] = new SelectList(_context.DiscsFromPage, "Id", "Id", discsInWishlist.DiscFromPageId);
+            ViewData["WishlistId"] = new SelectList(_context.Wishlist, "Id", "WishlistName", discsInWishlist.WishlistId);
             return View(discsInWishlist);
         }
 
@@ -96,7 +99,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,DiscId,WishlistId")] DiscsInWishlist discsInWishlist)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,DiscFromPageId,WishlistId")] DiscsInWishlist discsInWishlist)
         {
             if (id != discsInWishlist.Id)
             {
@@ -123,8 +126,8 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DiscId"] = new SelectList(_context.Disc, "Id", "Name", discsInWishlist.DiscId);
-            ViewData["WishlistId"] = new SelectList(_context.Wishlist, "Id", "Id", discsInWishlist.WishlistId);
+            ViewData["DiscFromPageId"] = new SelectList(_context.DiscsFromPage, "Id", "Id", discsInWishlist.DiscFromPageId);
+            ViewData["WishlistId"] = new SelectList(_context.Wishlist, "Id", "WishlistName", discsInWishlist.WishlistId);
             return View(discsInWishlist);
         }
 
@@ -137,7 +140,7 @@ namespace WebApp.Controllers
             }
 
             var discsInWishlist = await _context.DiscInWishlist
-                .Include(d => d.Discs)
+                .Include(d => d.DiscFromPage)
                 .Include(d => d.Wishlists)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (discsInWishlist == null)

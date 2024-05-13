@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 using WebApp;
@@ -22,6 +23,8 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                        throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson(); 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
@@ -102,7 +105,7 @@ builder.Services.AddSwaggerGen();
 
 
 var app = builder.Build();
-
+SetupAppData(app);
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

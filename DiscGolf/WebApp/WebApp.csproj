@@ -71,6 +71,11 @@
       <_ContentIncludedByDefault Remove="Views\Wishlist\Details.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Wishlist\Edit.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Wishlist\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\DiscsInWishlist\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\DiscsInWishlist\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\DiscsInWishlist\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\DiscsInWishlist\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\DiscsInWishlist\Index.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
@@ -103,6 +108,21 @@
       <UpToDateCheckInput Remove="Views\Manufacturer\Details.cshtml" />
       <UpToDateCheckInput Remove="Views\Manufacturer\Edit.cshtml" />
       <UpToDateCheckInput Remove="Views\Manufacturer\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Wishlist\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Wishlist\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Wishlist\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Wishlist\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Wishlist\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Category\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Category\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Category\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Category\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Category\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Wishlist\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Wishlist\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Wishlist\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Wishlist\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Wishlist\Index.cshtml" />
       <UpToDateCheckInput Remove="Views\Wishlist\Create.cshtml" />
       <UpToDateCheckInput Remove="Views\Wishlist\Delete.cshtml" />
       <UpToDateCheckInput Remove="Views\Wishlist\Details.cshtml" />

@@ -10,6 +10,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using WebApp.ApiControllers.Identity;
 using WebApp.Helpers;
 
 namespace WebApp.ApiControllers
@@ -45,11 +46,20 @@ namespace WebApp.ApiControllers
 
         public async Task<ActionResult<IEnumerable<App.DTO.v1_0.Wishlist>>> GetWishlist()
         {
+            var userId = _userManager.GetUserId(User);
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+            
             var res = (await _bll.Wishlists.GetAllSortedAsync(
-                    Guid.Parse(_userManager.GetUserId(User))
+                    Guid.Parse(userId)
                 ))
                 .Select(e => _mapper.Map(e))
                 .ToList();
+            var acc = await _userManager.GetUserAsync(User);
+            var result = await _userManager.GetLoginsAsync(acc);
+            Console.WriteLine(result);
             return Ok(res);
 
         }
