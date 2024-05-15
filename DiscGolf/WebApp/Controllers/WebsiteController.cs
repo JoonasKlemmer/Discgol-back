@@ -1,28 +1,25 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
-using App.Domain;
+
 
 namespace WebApp.Controllers
 {
     public class WebsiteController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppBLL _bll;
 
-        public WebsiteController(AppDbContext context)
+        public WebsiteController(IAppBLL bll)
         {
-            _context = context;
+            _bll = bll;
         }
 
         // GET: Website
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Website.ToListAsync());
+            return View(await _bll.Websites.GetAllAsync());
         }
 
         // GET: Website/Details/5
@@ -33,8 +30,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var website = await _context.Website
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var website = await _bll.Websites
+                .FirstOrDefaultAsync(id.Value);
             if (website == null)
             {
                 return NotFound();
@@ -54,13 +51,13 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Url,WebsiteName")] Website website)
+        public async Task<IActionResult> Create(Website website)
         {
             if (ModelState.IsValid)
             {
                 website.Id = Guid.NewGuid();
-                _context.Add(website);
-                await _context.SaveChangesAsync();
+                _bll.Websites.Add(website);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(website);
@@ -74,7 +71,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var website = await _context.Website.FindAsync(id);
+            var website = await _bll.Websites.FirstOrDefaultAsync(id.Value);
             if (website == null)
             {
                 return NotFound();
@@ -87,7 +84,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Url,WebsiteName")] Website website)
+        public async Task<IActionResult> Edit(Guid id,Website website)
         {
             if (id != website.Id)
             {
@@ -98,8 +95,8 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(website);
-                    await _context.SaveChangesAsync();
+                    _bll.Websites.Update(website);
+                    await _bll.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -125,8 +122,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var website = await _context.Website
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var website = await _bll.Websites
+                .FirstOrDefaultAsync(id.Value);
             if (website == null)
             {
                 return NotFound();
@@ -140,19 +137,19 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var website = await _context.Website.FindAsync(id);
+            var website = await _bll.Websites.FirstOrDefaultAsync(id);
             if (website != null)
             {
-                _context.Website.Remove(website);
+                _bll.Websites.Remove(website);
             }
 
-            await _context.SaveChangesAsync();
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool WebsiteExists(Guid id)
         {
-            return _context.Website.Any(e => e.Id == id);
+            return _bll.Websites.Exists(id);
         }
     }
 }

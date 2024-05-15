@@ -23,8 +23,8 @@ public class DiscService :
         return (await Repository.GetAllSortedAsync(userId)).Select(e => Mapper.Map(e));
     }
 
-    public async Task<IEnumerable<Disc>> GetByName(string name)
+    public async Task<IEnumerable<Disc>> GetAllDiscs()
     {
-        return (await Repository.GetByName(name)).Select(e =>Mapper.Map(e));
+        return (await Repository.GetAllDiscs()).Select(e =>Mapper.Map(e));
     }
 }

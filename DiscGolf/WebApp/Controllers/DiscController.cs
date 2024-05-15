@@ -1,29 +1,26 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
-using App.Domain;
+
 
 namespace WebApp.Controllers
 {
     public class DiscController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppBLL _bll;
 
-        public DiscController(AppDbContext context)
+        public DiscController(IAppBLL bll)
         {
-            _context = context;
+            _bll = bll;
         }
 
         // GET: Disc
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Disc.Include(d => d.Categories).Include(d => d.Manufacturer);
-            return View(await appDbContext.ToListAsync());
+            var res = await _bll.Discs.GetAllDiscs();
+            return View(res);
         }
 
         // GET: Disc/Details/5
@@ -34,10 +31,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var disc = await _context.Disc
-                .Include(d => d.Categories)
-                .Include(d => d.Manufacturer)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var disc = await _bll.Discs.FirstOrDefaultAsync(id.Value);
             if (disc == null)
             {
                 return NotFound();
@@ -49,8 +43,8 @@ namespace WebApp.Controllers
         // GET: Disc/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "CategoryName");
-            ViewData["ManufacturerId"] = new SelectList(_context.Manufacturer, "Id", "Location");
+            ViewData["CategoryId"] = new SelectList(_bll.Categories.GetAll(), "Id", "CategoryName");
+            ViewData["ManufacturerId"] = new SelectList(_bll.Manufacturers.GetAll(), "Id", "Location");
             return View();
         }
 
@@ -59,17 +53,17 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Speed,Glide,Turn,Fade,ManufacturerId,CategoryId")] Disc disc)
+        public async Task<IActionResult> Create(Disc disc)
         {
             if (ModelState.IsValid)
             {
                 disc.Id = Guid.NewGuid();
-                _context.Add(disc);
-                await _context.SaveChangesAsync();
+                _bll.Discs.Add(disc);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "CategoryName", disc.CategoryId);
-            ViewData["ManufacturerId"] = new SelectList(_context.Manufacturer, "Id", "Location", disc.ManufacturerId);
+            ViewData["CategoryId"] = new SelectList(await _bll.Categories.GetAllAsync(), "Id", "CategoryName", disc.CategoryId);
+            ViewData["ManufacturerId"] = new SelectList(await _bll.Manufacturers.GetAllAsync(), "Id", "Location", disc.ManufacturerId);
             return View(disc);
         }
 
@@ -81,13 +75,13 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var disc = await _context.Disc.FindAsync(id);
+            var disc = await _bll.Discs.FirstOrDefaultAsync(id.Value);
             if (disc == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "CategoryName", disc.CategoryId);
-            ViewData["ManufacturerId"] = new SelectList(_context.Manufacturer, "Id", "Location", disc.ManufacturerId);
+            ViewData["CategoryId"] = new SelectList(await _bll.Categories.GetAllAsync(), "Id", "CategoryName", disc.CategoryId);
+            ViewData["ManufacturerId"] = new SelectList(await _bll.Manufacturers.GetAllAsync(), "Id", "Location", disc.ManufacturerId);
             return View(disc);
         }
 
@@ -96,7 +90,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Speed,Glide,Turn,Fade,ManufacturerId,CategoryId")] Disc disc)
+        public async Task<IActionResult> Edit(Guid id,  Disc disc)
         {
             if (id != disc.Id)
             {
@@ -107,8 +101,8 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(disc);
-                    await _context.SaveChangesAsync();
+                    _bll.Discs.Update(disc);
+                    await _bll.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -123,8 +117,8 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "CategoryName", disc.CategoryId);
-            ViewData["ManufacturerId"] = new SelectList(_context.Manufacturer, "Id", "Location", disc.ManufacturerId);
+            ViewData["CategoryId"] = new SelectList(await _bll.Categories.GetAllAsync(), "Id", "CategoryName", disc.CategoryId);
+            ViewData["ManufacturerId"] = new SelectList(await _bll.Manufacturers.GetAllAsync(), "Id", "Location", disc.ManufacturerId);
             return View(disc);
         }
 
@@ -136,10 +130,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var disc = await _context.Disc
-                .Include(d => d.Categories)
-                .Include(d => d.Manufacturer)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var disc = await _bll.Discs.FirstOrDefaultAsync(id.Value);
             if (disc == null)
             {
                 return NotFound();
@@ -153,19 +144,19 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var disc = await _context.Disc.FindAsync(id);
+            var disc = await _bll.Discs.FirstOrDefaultAsync(id);
             if (disc != null)
             {
-                _context.Disc.Remove(disc);
+                _bll.Discs.Remove(disc);
             }
 
-            await _context.SaveChangesAsync();
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool DiscExists(Guid id)
         {
-            return _context.Disc.Any(e => e.Id == id);
+            return _bll.Discs.Exists(id);
         }
     }
 }

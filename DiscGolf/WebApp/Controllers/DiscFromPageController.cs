@@ -1,29 +1,28 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
-using App.Domain;
+
 
 namespace WebApp.Controllers
 {
     public class DiscFromPageController : Controller
     {
-        private readonly AppDbContext _context;
 
-        public DiscFromPageController(AppDbContext context)
+        private readonly IAppBLL _bll;
+        
+
+        public DiscFromPageController(IAppBLL bll)
         {
-            _context = context;
+            _bll = bll;
         }
 
         // GET: DiscFromPage
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.DiscsFromPage.Include(d => d.Discs).Include(d => d.PriceValue).Include(d => d.Websites);
-            return View(await appDbContext.ToListAsync());
+            var res = await _bll.DiscFromPages.GetAllWithDetails();
+            return View(res);
         }
 
         // GET: DiscFromPage/Details/5
@@ -34,11 +33,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var discFromPage = await _context.DiscsFromPage
-                .Include(d => d.Discs)
-                .Include(d => d.PriceValue)
-                .Include(d => d.Websites)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var discFromPage = await _bll.DiscFromPages.FirstOrDefaultAsync(id.Value);
             if (discFromPage == null)
             {
                 return NotFound();
@@ -50,9 +45,9 @@ namespace WebApp.Controllers
         // GET: DiscFromPage/Create
         public IActionResult Create()
         {
-            ViewData["DiscId"] = new SelectList(_context.Disc, "Id", "Name");
-            ViewData["PriceId"] = new SelectList(_context.Price, "Id", "Iso");
-            ViewData["WebsiteId"] = new SelectList(_context.Website, "Id", "Url");
+            ViewData["DiscId"] = new SelectList(_bll.Discs.GetAll(), "Id", "Name");
+            ViewData["PriceId"] = new SelectList(_bll.Prices.GetAll(), "Id", "Iso");
+            ViewData["WebsiteId"] = new SelectList(_bll.Websites.GetAll(), "Id", "Url");
             return View();
         }
 
@@ -61,18 +56,18 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Price,DiscId,WebsiteId,PriceId")] DiscFromPage discFromPage)
+        public async Task<IActionResult> Create(DiscFromPage discFromPage)
         {
             if (ModelState.IsValid)
             {
                 discFromPage.Id = Guid.NewGuid();
-                _context.Add(discFromPage);
-                await _context.SaveChangesAsync();
+                _bll.DiscFromPages.Add(discFromPage);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DiscId"] = new SelectList(_context.Disc, "Id", "Name", discFromPage.DiscId);
-            ViewData["PriceId"] = new SelectList(_context.Price, "Id", "Iso", discFromPage.PriceId);
-            ViewData["WebsiteId"] = new SelectList(_context.Website, "Id", "Url", discFromPage.WebsiteId);
+            ViewData["DiscId"] = new SelectList(await _bll.Discs.GetAllAsync(), "Id", "Name", discFromPage.DiscId);
+            ViewData["PriceId"] = new SelectList(await _bll.Prices.GetAllAsync(), "Id", "Iso", discFromPage.PriceId);
+            ViewData["WebsiteId"] = new SelectList(await _bll.Websites.GetAllAsync(), "Id", "Url", discFromPage.WebsiteId);
             return View(discFromPage);
         }
 
@@ -84,14 +79,14 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var discFromPage = await _context.DiscsFromPage.FindAsync(id);
+            var discFromPage = await _bll.DiscFromPages.FirstOrDefaultAsync(id.Value);
             if (discFromPage == null)
             {
                 return NotFound();
             }
-            ViewData["DiscId"] = new SelectList(_context.Disc, "Id", "Name", discFromPage.DiscId);
-            ViewData["PriceId"] = new SelectList(_context.Price, "Id", "Iso", discFromPage.PriceId);
-            ViewData["WebsiteId"] = new SelectList(_context.Website, "Id", "Url", discFromPage.WebsiteId);
+            ViewData["DiscId"] = new SelectList(await _bll.Discs.GetAllAsync(), "Id", "Name", discFromPage.DiscId);
+            ViewData["PriceId"] = new SelectList(await _bll.Prices.GetAllAsync(), "Id", "Iso", discFromPage.PriceId);
+            ViewData["WebsiteId"] = new SelectList(await _bll.Websites.GetAllAsync(), "Id", "Url", discFromPage.WebsiteId);
             return View(discFromPage);
         }
 
@@ -100,7 +95,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Price,DiscId,WebsiteId,PriceId")] DiscFromPage discFromPage)
+        public async Task<IActionResult> Edit(Guid id, DiscFromPage discFromPage)
         {
             if (id != discFromPage.Id)
             {
@@ -111,8 +106,8 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(discFromPage);
-                    await _context.SaveChangesAsync();
+                    _bll.DiscFromPages.Update(discFromPage);
+                    await _bll.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -127,9 +122,9 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DiscId"] = new SelectList(_context.Disc, "Id", "Name", discFromPage.DiscId);
-            ViewData["PriceId"] = new SelectList(_context.Price, "Id", "Iso", discFromPage.PriceId);
-            ViewData["WebsiteId"] = new SelectList(_context.Website, "Id", "Url", discFromPage.WebsiteId);
+            ViewData["DiscId"] = new SelectList(await _bll.Discs.GetAllAsync(), "Id", "Name", discFromPage.DiscId);
+            ViewData["PriceId"] = new SelectList(await _bll.Prices.GetAllAsync(), "Id", "Iso", discFromPage.PriceId);
+            ViewData["WebsiteId"] = new SelectList(await _bll.Websites.GetAllAsync(), "Id", "Url", discFromPage.WebsiteId);
             return View(discFromPage);
         }
 
@@ -141,11 +136,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var discFromPage = await _context.DiscsFromPage
-                .Include(d => d.Discs)
-                .Include(d => d.PriceValue)
-                .Include(d => d.Websites)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var discFromPage = await _bll.DiscFromPages.FirstOrDefaultAsync(id.Value);
             if (discFromPage == null)
             {
                 return NotFound();
@@ -159,19 +150,19 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var discFromPage = await _context.DiscsFromPage.FindAsync(id);
+            var discFromPage = await _bll.DiscFromPages.FirstOrDefaultAsync(id);
             if (discFromPage != null)
             {
-                _context.DiscsFromPage.Remove(discFromPage);
+                _bll.DiscFromPages.Remove(discFromPage);
             }
 
-            await _context.SaveChangesAsync();
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool DiscFromPageExists(Guid id)
         {
-            return _context.DiscsFromPage.Any(e => e.Id == id);
+            return _bll.DiscFromPages.Exists(id);
         }
     }
 }

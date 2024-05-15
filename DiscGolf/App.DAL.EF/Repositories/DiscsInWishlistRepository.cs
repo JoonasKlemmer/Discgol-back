@@ -35,5 +35,18 @@ public class DiscsInWishlistRepository : BaseEntityRepository<APPDomain.DiscsInW
         var res = await query.ToListAsync();
         return res.Select(e => Mapper.Map(e))!;
     }
-    // implement your custom methods here
+
+    public async Task<IEnumerable<DALDTO.DiscsInWishlist>> GetAllWithDetailsNoUser()
+    {
+        var query = CreateQuery();
+        query = query
+            .Include(c => c.DiscFromPage)
+            .ThenInclude(c => c!.Discs).ThenInclude(c => c!.Manufacturer)
+            .Include(c => c.Wishlists)
+            .Include(c => c.DiscFromPage).ThenInclude(c => c!.Discs!.Categories)
+            .Include(c => c.DiscFromPage).ThenInclude(c => c!.Websites);
+        
+        var res = await query.ToListAsync();
+        return res.Select(e => Mapper.Map(e))!;
+    }
 }

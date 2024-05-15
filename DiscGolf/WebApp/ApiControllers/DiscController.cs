@@ -66,14 +66,14 @@ namespace WebApp.ApiControllers
         [Consumes("application/json")]
         public async Task<ActionResult<Disc>> GetDisc(string name)
         {
-            var disc = await _bll.Discs.GetByName(name);
+            /*var disc = await _bll.Discs.GetByName(name);
 
             if (disc == null)
             {
                 return NotFound();
             }
-
-            return Ok(disc);
+                */
+            return Ok();
         }
 
         // PUT: api/Disc/5

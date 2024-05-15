@@ -51,10 +51,8 @@ namespace WebApp.ApiControllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [Produces("application/json")]
         [Consumes("application/json")]
-
         public async Task<ActionResult<Manufacturer>> GetDiscsByName(string discName)
         {
-            Console.WriteLine("SIIN SEEEES");
             var bllDiscs = (await _bll.DiscFromPages.GetAllWithDetailsByName(discName)).ToList();
             var res = await _bll.DiscFromPages.GetAllDiscData(bllDiscs);
             var result = res.Select(e => _discWithDetailsMapper.Map(e)).ToList();

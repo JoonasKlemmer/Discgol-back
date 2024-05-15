@@ -13,4 +13,5 @@ public interface IWishlistRepository : IEntityRepository<DALDTO.Wishlist>, IWish
 public interface IWishlistRepositoryCustom<TEntity>
 {
     Task<IEnumerable<TEntity>> GetAllSortedAsync(Guid userId);
+
 }

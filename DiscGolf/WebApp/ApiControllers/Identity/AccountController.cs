@@ -151,25 +151,26 @@ public class AccountController : ControllerBase
 
 
     [HttpPost]
-    public async Task<ActionResult<JWTResponse>> Login(
-        [FromBody]
-        LoginInfo loginInfo,
+    public async Task<ActionResult<JWTResponse>> Login([FromBody] LoginInfo loginInfo,
         [FromQuery]
         int expiresInSeconds
     )
     {
+        Random rnd = new Random();
+        
         if (expiresInSeconds <= 0) expiresInSeconds = int.MaxValue;
         expiresInSeconds = expiresInSeconds < _configuration.GetValue<int>("JWT:expiresInSeconds")
             ? expiresInSeconds
             : _configuration.GetValue<int>("JWT:expiresInSeconds");
 
+        
         // verify user
         var appUser = await _userManager.FindByEmailAsync(loginInfo.Email);
         if (appUser == null)
         {
             _logger.LogWarning("WebApi login failed, email {} not found", loginInfo.Email);
-            // TODO: random delay 
-            return NotFound("User/Password problem");
+            await Task.Delay(rnd.Next(100, 1000));
+            return NotFound("User problem");
         }
 
         // verify password
@@ -178,15 +179,15 @@ public class AccountController : ControllerBase
         {
             _logger.LogWarning("WebApi login failed, password {} for email {} was wrong", loginInfo.Password,
                 loginInfo.Email);
-            // TODO: random delay 
-            return NotFound("User/Password problem");
+            await Task.Delay(rnd.Next(100, 1000));
+            return NotFound("Password problem");
         }
 
         var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(appUser);
         if (claimsPrincipal == null)
         {
             _logger.LogWarning("WebApi login failed, claimsPrincipal null");
-            // TODO: random delay 
+            await Task.Delay(rnd.Next(100, 1000));
             return NotFound("User/Password problem");
         }
 
@@ -197,6 +198,8 @@ public class AccountController : ControllerBase
                 .ExecuteDeleteAsync();
             _logger.LogInformation("Deleted {} refresh tokens", deletedRows);
         }
+
+        
 
         var refreshToken = new AppRefreshToken()
         {
@@ -220,6 +223,7 @@ public class AccountController : ControllerBase
         };
 
         return Ok(responseData);
+
     }
 
     [HttpPost]

@@ -14,5 +14,6 @@ public class AutoMapperProfile : Profile
         CreateMap<App.Domain.Price, App.DAL.DTO.Price>().ReverseMap();
         CreateMap<App.Domain.Website, App.DAL.DTO.Website>().ReverseMap();
         CreateMap<App.Domain.Wishlist, App.DAL.DTO.Wishlist>().ReverseMap();
+       
     }
 }

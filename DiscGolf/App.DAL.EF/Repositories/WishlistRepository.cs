@@ -22,7 +22,7 @@ public class WishlistRepository : BaseEntityRepository<APPDomain.Wishlist, DALDT
         var res = await query.ToListAsync();
         return res.Select(e => Mapper.Map(e));
     }
-
+    
     
     // implement your custom methods here
 }

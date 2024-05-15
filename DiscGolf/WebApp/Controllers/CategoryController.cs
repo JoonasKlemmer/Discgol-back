@@ -1,28 +1,25 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
-using App.Domain;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 
 namespace WebApp.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppBLL _bll;
 
-        public CategoryController(AppDbContext context)
+        public CategoryController(IAppBLL bll)
         {
-            _context = context;
+            _bll = bll;
+
         }
 
         // GET: Category
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Category.ToListAsync());
+            return View(await _bll.Categories.GetAllAsync());
         }
 
         // GET: Category/Details/5
@@ -33,8 +30,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Category
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var category = await _bll.Categories
+                .FirstOrDefaultAsync(id.Value);
             if (category == null)
             {
                 return NotFound();
@@ -54,13 +51,13 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CategoryName")] Category category)
+        public async Task<IActionResult> Create( Category category)
         {
             if (ModelState.IsValid)
             {
                 category.Id = Guid.NewGuid();
-                _context.Add(category);
-                await _context.SaveChangesAsync();
+                _bll.Categories.Add(category);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(category);
@@ -74,7 +71,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Category.FindAsync(id);
+            var category = await _bll.Categories.FirstOrDefaultAsync(id.Value);
             if (category == null)
             {
                 return NotFound();
@@ -87,7 +84,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,CategoryName")] Category category)
+        public async Task<IActionResult> Edit(Guid id, Category category)
         {
             if (id != category.Id)
             {
@@ -98,8 +95,8 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(category);
-                    await _context.SaveChangesAsync();
+                    _bll.Categories.Update(category);
+                    await _bll.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -125,8 +122,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Category
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var category = await _bll.Categories
+                .FirstOrDefaultAsync(id.Value);
             if (category == null)
             {
                 return NotFound();
@@ -140,19 +137,19 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var category = await _context.Category.FindAsync(id);
+            var category = await _bll.Categories.FirstOrDefaultAsync(id);
             if (category != null)
             {
-                _context.Category.Remove(category);
+                _bll.Categories.Remove(category);
             }
 
-            await _context.SaveChangesAsync();
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CategoryExists(Guid id)
         {
-            return _context.Category.Any(e => e.Id == id);
+            return _bll.Categories.Exists(id);
         }
     }
 }
