@@ -47,6 +47,7 @@ namespace WebApp.ApiControllers
         public async Task<ActionResult<IEnumerable<App.DTO.v1_0.Wishlist>>> GetWishlist()
         {
             var userId = _userManager.GetUserId(User);
+            
             if (userId == null)
             {
                 return Unauthorized();
@@ -57,9 +58,6 @@ namespace WebApp.ApiControllers
                 ))
                 .Select(e => _mapper.Map(e))
                 .ToList();
-            var acc = await _userManager.GetUserAsync(User);
-            var result = await _userManager.GetLoginsAsync(acc);
-            Console.WriteLine(result);
             return Ok(res);
 
         }

@@ -6,6 +6,7 @@ namespace App.Contracts.DAL.Repositories;
 
 public interface IWishlistRepository : IEntityRepository<DALDTO.Wishlist>, IWishlistRepositoryCustom<DALDTO.Wishlist>
 {
+    Task<IEnumerable<DALDTO.Wishlist>> GetAll(Guid userId);
     // define your DAL only custom methods here
 }
 

@@ -23,4 +23,10 @@ public class WishlistService :
     {
         return (await Repository.GetAllSortedAsync(userId)).Select(e => Mapper.Map(e));
     }
+    
+    public async Task<IEnumerable<Wishlist>> GetAll(Guid userId)
+    {
+        return (await Repository.GetAll(userId)).Select(e => Mapper.Map(e));
+    }
+
 }

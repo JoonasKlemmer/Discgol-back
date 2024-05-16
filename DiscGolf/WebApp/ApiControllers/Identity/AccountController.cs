@@ -145,7 +145,10 @@ public class AccountController : ControllerBase
         {
             Jwt = jwt,
             RefreshToken = refreshToken.RefreshToken,
+            FirstName = appUser.FirstName,
+            LastName = appUser.LastName
         };
+        
         return Ok(res);
     }
 
@@ -219,7 +222,9 @@ public class AccountController : ControllerBase
         var responseData = new JWTResponse()
         {
             Jwt = jwt,
-            RefreshToken = refreshToken.RefreshToken
+            RefreshToken = refreshToken.RefreshToken,
+            FirstName = appUser.FirstName,
+            LastName = appUser.LastName
         };
 
         return Ok(responseData);

@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
 {
-    [Authorize]
     public class WishlistController : Controller
     {
         private readonly AppDbContext _context;

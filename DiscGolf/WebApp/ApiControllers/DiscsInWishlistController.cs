@@ -37,16 +37,23 @@ namespace WebApp.ApiControllers
         }
 
         // GET: api/DiscsInWishlist
-        [HttpGet]
+        [HttpGet("{wishlistId}")]
         [ProducesResponseType<IEnumerable<App.DTO.v1_0.DiscsInWishlist>>((int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.Unauthorized)]
         [Produces("application/json")]
-        [Consumes("application/json")]
-        public async Task<ActionResult<IEnumerable<DiscsInWishlist>>> GetDiscInWishlist()
+ 
+        public async Task<ActionResult<IEnumerable<DiscsInWishlist>>> GetDiscInWishlist(string wishlistId)
         {
-            var res = await _bll.DiscsInWishlists.GetAllAsync();
-           
+            var userId = _userManager.GetUserId(User);
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var res = (await _bll.DiscsInWishlists.GetAllWithDetails(Guid.Parse(userId), Guid.Parse(wishlistId)));
+
             return Ok(res);
+
         }
 }
         

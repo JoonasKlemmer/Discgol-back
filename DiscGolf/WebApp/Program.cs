@@ -42,6 +42,9 @@ builder.Services
     .AddDefaultTokenProviders();
 
 
+
+
+
 //clear claims
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
@@ -59,7 +62,7 @@ builder.Services
             IssuerSigningKey =
                 new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(
-                        builder.Configuration.GetValue<string>("JWT:issuer")
+                        builder.Configuration.GetValue<string>("JWT:key")
                     )
                 ),
             ClockSkew = TimeSpan.Zero,
@@ -72,6 +75,19 @@ builder.Services.AddControllersWithViews();
 	
 builder.Services.AddControllers().AddJsonOptions(x =>
     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsAllowAny", policy =>
+    {
+        policy.AllowAnyHeader();
+        policy.AllowAnyMethod();
+        policy.AllowAnyOrigin();
+    });
+});
+
+
+
 
 // reference any class from class library to be scanned for mapper configurations
 builder.Services.AddAutoMapper(
@@ -105,6 +121,8 @@ builder.Services.AddSwaggerGen();
 
 
 var app = builder.Build();
+
+
 SetupAppData(app);
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -125,6 +143,7 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.UseCors("CorsAllowAny");
 
 app.UseSwagger();
 app.UseSwaggerUI(options =>

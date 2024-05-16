@@ -7,4 +7,5 @@ public class Wishlist
     public Guid Id { get; set; }
     [MaxLength(128)]
     public string WishlistName { get; set; } = default!;
+    public Guid AppUserId { get; set; }
 }

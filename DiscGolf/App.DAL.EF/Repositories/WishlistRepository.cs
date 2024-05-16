@@ -23,6 +23,12 @@ public class WishlistRepository : BaseEntityRepository<APPDomain.Wishlist, DALDT
         return res.Select(e => Mapper.Map(e));
     }
     
-    
+    public async Task<IEnumerable<DALDTO.Wishlist>> GetAll(Guid userId)
+    {
+        var query = CreateQuery(userId);
+        query = query.OrderBy(c => c.WishlistName);
+        var res = await query.ToListAsync();
+        return res.Select(e => Mapper.Map(e));
+    }
     // implement your custom methods here
 }

@@ -13,7 +13,26 @@ public class AutoMapperProfile : Profile
         CreateMap<App.DAL.DTO.Manufacturer, App.BLL.DTO.Manufacturer>().ReverseMap();
         CreateMap<App.DAL.DTO.Price, App.BLL.DTO.Price>().ReverseMap();
         CreateMap<App.DAL.DTO.Website, App.BLL.DTO.Website>().ReverseMap();
+        CreateMap<App.DAL.DTO.DiscFromPage, App.BLL.DTO.DiscWithDetails>()
+            .ForMember(dest => dest.DiscName, opt => opt.MapFrom(src => src.Discs!.Name))
+            .ForMember(dest => dest.Speed, opt => opt.MapFrom(src => src.Discs!.Speed))
+            .ForMember(dest => dest.Glide, opt => opt.MapFrom(src => src.Discs!.Glide))
+            .ForMember(dest => dest.Turn, opt => opt.MapFrom(src => src.Discs!.Turn))
+            .ForMember(dest => dest.Fade, opt => opt.MapFrom(src => src.Discs!.Fade))
+            .ForMember(dest => dest.ManufacturerName, opt => opt.MapFrom(src => src.Discs!.Manufacturer!.ManufacturerName))
+            .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Discs!.Categories!.CategoryName))
+            .ForMember(dest => dest.DiscPrice, opt => opt.MapFrom(src => src.Price))
+            .ForMember(dest => dest.PageUrl, opt => opt.MapFrom(src => src.Websites!.Url));
+        
+        CreateMap<App.DAL.DTO.DiscsInWishlist, App.BLL.DTO.DiscWithDetails>()
+            .ForMember(dest => dest.DiscName, opt => opt.MapFrom(src => src.DiscFromPage!.Discs!.Name))
+            .ForMember(dest => dest.Speed, opt => opt.MapFrom(src => src.DiscFromPage!.Discs!.Speed))
+            .ForMember(dest => dest.Glide, opt => opt.MapFrom(src => src.DiscFromPage!.Discs!.Glide))
+            .ForMember(dest => dest.Turn, opt => opt.MapFrom(src => src.DiscFromPage!.Discs!.Turn))
+            .ForMember(dest => dest.Fade, opt => opt.MapFrom(src => src.DiscFromPage!.Discs!.Fade))
+            .ForMember(dest => dest.ManufacturerName, opt => opt.MapFrom(src => src.DiscFromPage!.Discs!.Manufacturer!.ManufacturerName))
+            .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.DiscFromPage!.Discs!.Categories!.CategoryName))
+            .ForMember(dest => dest.DiscPrice, opt => opt.MapFrom(src => src.DiscFromPage!.Price))
+            .ForMember(dest => dest.PageUrl, opt => opt.MapFrom(src => src.DiscFromPage!.Websites!.Url));
     }
-    
-    
 }

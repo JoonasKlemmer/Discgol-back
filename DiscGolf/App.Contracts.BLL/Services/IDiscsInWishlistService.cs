@@ -5,7 +5,6 @@ namespace App.Contracts.BLL.Services;
 
 public interface IDiscsInWishlistService : IEntityRepository<App.BLL.DTO.DiscsInWishlist>, IWishlistRepositoryCustom<App.BLL.DTO.DiscsInWishlist>
 {
-    Task<IEnumerable<DiscsInWishlist>> GetAllWithDetails(Guid userId);
-    Task<IEnumerable<DiscsInWishlist>> GetAllWithDetailsNoUser();
+    Task<List<DiscWithDetails>> GetAllWithDetails(Guid userId, Guid wishlistId);
 
 }

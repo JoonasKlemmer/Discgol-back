@@ -1,3 +1,4 @@
+using App.BLL.DTO;
 using App.Contracts.BLL.Services;
 using App.Contracts.DAL.Repositories;
 
@@ -13,9 +14,11 @@ public class DiscsInWishlistService :
     BaseEntityService<App.DAL.DTO.DiscsInWishlist, App.BLL.DTO.DiscsInWishlist, IDiscsInWishlistRepository>,
     IDiscsInWishlistService
 {
+    private readonly IMapper _mapper;
     public DiscsInWishlistService(IUnitOfWork uoW, IDiscsInWishlistRepository repository, IMapper mapper) : base(uoW,
         repository, new BllDalMapper<App.DAL.DTO.DiscsInWishlist, App.BLL.DTO.DiscsInWishlist>(mapper))
     {
+        _mapper = mapper;
     }
 
     public async Task<IEnumerable<DiscsInWishlist>> GetAllSortedAsync(Guid userId)
@@ -26,12 +29,15 @@ public class DiscsInWishlistService :
     
 
 
-    public async Task<IEnumerable<DiscsInWishlist>> GetAllWithDetails(Guid userId)
+    public async Task<List<DiscWithDetails>> GetAllWithDetails(Guid userId, Guid wishlistId)
     {
-        return (await Repository.GetAllWithDetails(userId)).Select(e => Mapper.Map(e));
-    }
-    public async Task<IEnumerable<DiscsInWishlist>> GetAllWithDetailsNoUser()
-    {
-        return (await Repository.GetAllWithDetailsNoUser()).Select(e => Mapper.Map(e));
+        var discs = (await Repository.GetAllWithDetails(userId, wishlistId)).ToList();
+        var discWd = new List<DiscWithDetails>();
+        foreach (var disc in discs)
+        {
+            var discWithDetails = _mapper.Map<DiscWithDetails>(disc);
+            discWd.Add(discWithDetails);
+        }
+        return discWd;
     }
 }
