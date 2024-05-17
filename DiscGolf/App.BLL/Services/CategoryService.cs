@@ -1,6 +1,5 @@
 using App.Contracts.BLL.Services;
 using App.Contracts.DAL.Repositories;
-
 using AutoMapper;
 using Base.BLL;
 using Base.Contracts.DAL;
@@ -20,7 +19,7 @@ public class CategoryService :
 
     public async Task<IEnumerable<Category>> GetAllSortedAsync(Guid userId)
     {
-        return (await Repository.GetAllSortedAsync(userId)).Select(e => Mapper.Map(e));
+        return (await Repository.GetAllSortedAsync(userId)).Select(e => Mapper.Map(e))!;
     }
     
     

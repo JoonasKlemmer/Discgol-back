@@ -1,4 +1,4 @@
-using App.BLL.DTO;
+
 using App.Contracts.BLL.Services;
 using App.Contracts.DAL.Repositories;
 
@@ -21,6 +21,6 @@ public class WebsiteService :
 
     public async Task<IEnumerable<Website>> GetAllSortedAsync(Guid userId)
     {
-        return (await Repository.GetAllSortedAsync(userId)).Select(e => Mapper.Map(e));
+        return (await Repository.GetAllSortedAsync(userId)).Select(e => Mapper.Map(e))!;
     }
 }

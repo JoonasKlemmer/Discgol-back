@@ -15,6 +15,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using WebApp.DTO;
 using WebApp.Helpers;
 
 namespace WebApp.ApiControllers
@@ -55,6 +56,57 @@ namespace WebApp.ApiControllers
             return Ok(res);
 
         }
+        
+        // PUT: api/discsinwishlist/id
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+
+        public async Task<IActionResult> PostDiscInWishlist([FromBody]WishlistInfo wishlistInfo)  
+        {
+            if (ModelState.IsValid)
+            {
+                var discsInWishlist = new App.BLL.DTO.DiscsInWishlist
+                {
+                    Id = Guid.NewGuid(),
+                    DiscFromPageId = Guid.Parse(wishlistInfo.DiscFromPageId),
+                    WishlistId = Guid.Parse(wishlistInfo.WishlistId)
+                };
+                _bll.DiscsInWishlists.Add(discsInWishlist);
+                await _bll.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            
+            return Ok(wishlistInfo);
+        }
+        
+        // DELETE: api/discinwishlist/{discInWishlistId}
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [HttpDelete("{discInWishlistId}")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+
+        public async Task<IActionResult> DeleteDiscInWishlist(Guid discInWishlistId)
+        {
+            Console.WriteLine(discInWishlistId);
+            var discInWishlist = await _bll.DiscsInWishlists.FirstOrDefaultAsync(discInWishlistId);
+            if (discInWishlist == null)
+            {
+                return NotFound();
+            }
+            Console.WriteLine("------------2------------------------------------");
+
+            await _bll.DiscsInWishlists.RemoveAsync(discInWishlist);
+            await _bll.SaveChangesAsync();
+
+            return NoContent();
+        }
+
 }
         
 }

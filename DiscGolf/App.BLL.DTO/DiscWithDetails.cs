@@ -2,7 +2,8 @@ namespace App.BLL.DTO;
 
 public class DiscWithDetails
 {
-    
+    public Guid DiscFromPageId { get; set; }
+    public Guid DiscsInWishlistId { get; set; } = Guid.Empty;
     public string DiscName { get; set; } = default!;
     
     public double Speed { get; set; }

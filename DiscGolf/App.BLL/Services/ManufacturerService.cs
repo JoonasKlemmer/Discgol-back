@@ -19,7 +19,7 @@ public class ManufacturerService :
 
     public async Task<IEnumerable<Manufacturer>> GetAllSortedAsync(Guid userId)
     {
-        return (await Repository.GetAllSortedAsync(userId)).Select(e => Mapper.Map(e));
+        return (await Repository.GetAllSortedAsync(userId)).Select(e => Mapper.Map(e))!;
     }
     
     public async Task<IEnumerable<DAL.DTO.Manufacturer>> GetAllManufacturers()

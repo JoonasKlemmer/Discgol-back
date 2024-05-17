@@ -1,6 +1,5 @@
 using App.Contracts.BLL.Services;
 using App.Contracts.DAL.Repositories;
-
 using AutoMapper;
 using Base.BLL;
 using Base.Contracts.DAL;
@@ -20,11 +19,11 @@ public class DiscService :
 
     public async Task<IEnumerable<Disc>> GetAllSortedAsync(Guid userId)
     {
-        return (await Repository.GetAllSortedAsync(userId)).Select(e => Mapper.Map(e));
+        return (await Repository.GetAllSortedAsync(userId)).Select(e => Mapper.Map(e))!;
     }
 
     public async Task<IEnumerable<Disc>> GetAllDiscs()
     {
-        return (await Repository.GetAllDiscs()).Select(e =>Mapper.Map(e));
+        return (await Repository.GetAllDiscs()).Select(e =>Mapper.Map(e))!;
     }
 }

@@ -86,13 +86,13 @@ public class BaseEntityService<TDalEntity, TBllEntity, TRepository, TKey> : IEnt
         throw new NotImplementedException();
     }
 
-    public Task<int> RemoveAsync(TBllEntity entity, TKey? userId = default)
+    public async Task<int> RemoveAsync(TBllEntity entity, TKey? userId = default)
     {
-        throw new NotImplementedException();
+        return await Repository.RemoveAsync(Mapper.Map(entity), userId);
     }
-
-    public Task<int> RemoveAsync(TKey id, TKey? userId = default)
+    
+    public async Task<int> RemoveAsync(TKey id, TKey? userId = default)
     {
-        throw new NotImplementedException();
+        return await Repository.RemoveAsync(id, userId);
     }
 }

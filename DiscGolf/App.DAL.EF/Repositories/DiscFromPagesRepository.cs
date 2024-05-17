@@ -41,7 +41,7 @@ public class DiscFromPagesRepository : BaseEntityRepository<APPDomain.DiscFromPa
     
     public async Task<IEnumerable<DALDTO.DiscFromPage>> GetAllWithDetailsByName(string discName)
     {
-        IQueryable<APPDomain.DiscFromPage> query = CreateQuery();
+        var query = CreateQuery();
         
         query = query
             .Include(c => c.Discs)
@@ -53,5 +53,22 @@ public class DiscFromPagesRepository : BaseEntityRepository<APPDomain.DiscFromPa
         
         var res = await query.ToListAsync();
         return res.Select(e => Mapper.Map(e))!;
+    }
+    
+    public async Task<IEnumerable<DALDTO.DiscFromPage>> GetWithDetailsById(Guid discFromPageId)
+    {
+        var query = CreateQuery();
+        
+        query = query
+            .Include(c => c.Discs)
+            .ThenInclude(c => c!.Manufacturer)
+            .Include(c => c.Discs!.Categories)
+            .Include(c => c.Websites)
+            .Include(c => c.PriceValue)
+            .Where(c => c.Id == discFromPageId);
+        var res = await query.FirstOrDefaultAsync();
+        var result =  Mapper.Map(res);
+        return new[] { result };
+
     }
 }

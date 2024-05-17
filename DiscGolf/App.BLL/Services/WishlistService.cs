@@ -1,4 +1,4 @@
-using App.BLL.DTO;
+
 using App.Contracts.BLL.Services;
 using App.Contracts.DAL;
 using App.Contracts.DAL.Repositories;
@@ -21,12 +21,12 @@ public class WishlistService :
 
     public async Task<IEnumerable<Wishlist>> GetAllSortedAsync(Guid userId)
     {
-        return (await Repository.GetAllSortedAsync(userId)).Select(e => Mapper.Map(e));
+        return (await Repository.GetAllSortedAsync(userId)).Select(e => Mapper.Map(e))!;
     }
     
     public async Task<IEnumerable<Wishlist>> GetAll(Guid userId)
     {
-        return (await Repository.GetAll(userId)).Select(e => Mapper.Map(e));
+        return (await Repository.GetAll(userId)).Select(e => Mapper.Map(e))!;
     }
 
 }

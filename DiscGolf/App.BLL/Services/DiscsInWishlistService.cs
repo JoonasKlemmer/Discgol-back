@@ -23,7 +23,7 @@ public class DiscsInWishlistService :
 
     public async Task<IEnumerable<DiscsInWishlist>> GetAllSortedAsync(Guid userId)
     {
-        return (await Repository.GetAllSortedAsync(userId)).Select(e => Mapper.Map(e));
+        return (await Repository.GetAllSortedAsync(userId)).Select(e => Mapper.Map(e))!;
     }
 
     

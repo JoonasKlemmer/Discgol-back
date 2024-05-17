@@ -4,10 +4,6 @@ using App.Contracts.DAL.Repositories;
 using AutoMapper;
 using Base.BLL;
 using Base.Contracts.DAL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace App.BLL.Services
 {
@@ -15,12 +11,12 @@ namespace App.BLL.Services
         BaseEntityService<App.DAL.DTO.DiscFromPage, App.BLL.DTO.DiscFromPage, IDiscFromPageRepository>,
         IDiscFromPageService
     {
-        private readonly IMapper _mapper; // Inject IMapper
+        private readonly IMapper _mapper;
 
         public DiscFromPageService(IUnitOfWork uoW, IDiscFromPageRepository repository, IMapper mapper) : base(uoW,
             repository, new BllDalMapper<App.DAL.DTO.DiscFromPage, App.BLL.DTO.DiscFromPage>(mapper))
         {
-            _mapper = mapper; // Assign IMapper in the constructor
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<DiscFromPage>> GetAllSortedAsync(Guid userId)
@@ -46,6 +42,13 @@ namespace App.BLL.Services
             
             return discsFromPage.Select(disc => _mapper.Map<DiscFromPage>(disc));
         }
+        public async Task<IEnumerable<DiscFromPage>> GetWithDetailsById(Guid discFromPageId)
+        {
+
+            var discsFromPage = await Repository.GetWithDetailsById(discFromPageId);
+            
+            return discsFromPage.Select(disc => _mapper.Map<DiscFromPage>(disc));
+        }
 
         public async Task<List<DiscWithDetails>> GetAllDiscData(List<DiscFromPage> discFromPages)
         {
@@ -61,6 +64,7 @@ namespace App.BLL.Services
 
                 var discWithDetails = new DiscWithDetails
                 {
+                    DiscFromPageId = discFromPage.Id,
                     DiscName = currentDisc.Name,
                     Speed = currentDisc.Speed,
                     Glide = currentDisc.Glide,

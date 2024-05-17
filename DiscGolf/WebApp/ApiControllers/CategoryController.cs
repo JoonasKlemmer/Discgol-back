@@ -26,7 +26,11 @@ namespace WebApp.ApiControllers
         private readonly IAppBLL _bll;
         private readonly PublicDTOBllMapper<App.DTO.v1_0.Category, App.BLL.DTO.Category> _mapper;
 
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="bll">IAppBLL</param>
+    /// <param name="autoMapper">AutoMapper</param>
         public CategoryController(IAppBLL bll,  IMapper autoMapper)
         {
             _bll = bll;
@@ -35,6 +39,10 @@ namespace WebApp.ApiControllers
         }
 
         // GET: api/Category
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [ProducesResponseType<IEnumerable<App.DTO.v1_0.Category>>((int) HttpStatusCode.OK)]
         [Produces("application/json")]

@@ -1,6 +1,5 @@
 using App.Contracts.BLL.Services;
 using App.Contracts.DAL.Repositories;
-using App.DTO.v1_0;
 using AutoMapper;
 using Base.BLL;
 using Base.Contracts.DAL;
@@ -20,7 +19,7 @@ public class PriceService :
 
     public async Task<IEnumerable<Price>> GetAllSortedAsync(Guid userId)
     {
-        return (await Repository.GetAllSortedAsync(userId)).Select(e => Mapper.Map(e));
+        return (await Repository.GetAllSortedAsync(userId)).Select(e => Mapper.Map(e))!;
     }
     
 }

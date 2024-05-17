@@ -14,6 +14,7 @@ public class AutoMapperProfile : Profile
         CreateMap<App.DAL.DTO.Price, App.BLL.DTO.Price>().ReverseMap();
         CreateMap<App.DAL.DTO.Website, App.BLL.DTO.Website>().ReverseMap();
         CreateMap<App.DAL.DTO.DiscFromPage, App.BLL.DTO.DiscWithDetails>()
+            .ForMember(dest => dest.DiscFromPageId, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.DiscName, opt => opt.MapFrom(src => src.Discs!.Name))
             .ForMember(dest => dest.Speed, opt => opt.MapFrom(src => src.Discs!.Speed))
             .ForMember(dest => dest.Glide, opt => opt.MapFrom(src => src.Discs!.Glide))
@@ -25,6 +26,8 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.PageUrl, opt => opt.MapFrom(src => src.Websites!.Url));
         
         CreateMap<App.DAL.DTO.DiscsInWishlist, App.BLL.DTO.DiscWithDetails>()
+            .ForMember(dest => dest.DiscFromPageId, opt => opt.MapFrom(src => src.DiscFromPage!.Id))
+            .ForMember(dest => dest.DiscsInWishlistId, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.DiscName, opt => opt.MapFrom(src => src.DiscFromPage!.Discs!.Name))
             .ForMember(dest => dest.Speed, opt => opt.MapFrom(src => src.DiscFromPage!.Discs!.Speed))
             .ForMember(dest => dest.Glide, opt => opt.MapFrom(src => src.DiscFromPage!.Discs!.Glide))
