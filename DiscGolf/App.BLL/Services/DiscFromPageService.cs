@@ -35,17 +35,20 @@ namespace App.BLL.Services
             return discsFromPage.Select(disc => _mapper.Map<DiscFromPage>(disc));
         }
 
-        public async Task<IEnumerable<DiscFromPage>> GetAllWithDetailsByName(string discName)
+        public async Task<IEnumerable<DiscFromPage>> GetAllWithDetailsByName(string Name)
         {
 
-            var discsFromPage = await Repository.GetAllWithDetailsByName(discName);
+            var discsFromPage = await Repository.GetAllWithDetailsByName(Name);
             
             return discsFromPage.Select(disc => _mapper.Map<DiscFromPage>(disc));
         }
-        public async Task<IEnumerable<DiscFromPage>> GetWithDetailsById(Guid discFromPageId)
+
+
+
+        public async Task<IEnumerable<DiscFromPage>> GetWithDetailsByDiscId(Guid discId)
         {
 
-            var discsFromPage = await Repository.GetWithDetailsById(discFromPageId);
+            var discsFromPage = await Repository.GetWithDetailsByDiscId(discId);
             
             return discsFromPage.Select(disc => _mapper.Map<DiscFromPage>(disc));
         }
@@ -58,14 +61,14 @@ namespace App.BLL.Services
 
                 var currentDisc = discFromPage.Discs;
                 var website = discFromPage.Websites!.Url;
-                var manufacturerName = currentDisc!.Manufacturer!.ManufacturerName;
+                var manufacturerName = currentDisc!.Manufacturers!.ManufacturerName;
                 var categoryName = currentDisc.Categories!.CategoryName;
 
 
                 var discWithDetails = new DiscWithDetails
                 {
                     DiscFromPageId = discFromPage.Id,
-                    DiscName = currentDisc.Name,
+                    Name = currentDisc.Name,
                     Speed = currentDisc.Speed,
                     Glide = currentDisc.Glide,
                     Turn = currentDisc.Turn,

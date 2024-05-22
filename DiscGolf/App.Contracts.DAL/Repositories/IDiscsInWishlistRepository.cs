@@ -12,5 +12,6 @@ public interface IDiscsInWishlistRepository  : IEntityRepository<DALDTO.DiscsInW
 public interface IDiscsInWishlistRepositoryCustom<TEntity>
 {
     Task<IEnumerable<TEntity>> GetAllSortedAsync(Guid userId);
-    Task<IEnumerable<DALDTO.DiscsInWishlist>> GetAllWithDetails(Guid userId, Guid wishlistId);
+    Task<IEnumerable<TEntity>> GetAllWithDetails(Guid userId);
+    Task<bool> GetDiscInWishlistById(Guid discFromPageId, Guid wishlistId);
 }

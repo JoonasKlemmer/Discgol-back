@@ -16,7 +16,7 @@ public class Disc : IDomainEntityId
     public double Fade { get; set; }
     
     public Guid ManufacturerId { get; set; }
-    public Manufacturer? Manufacturer { get; set; }
+    public Manufacturer? Manufacturers { get; set; }
     
     public Guid CategoryId { get; set; }
     public Category? Categories { get; set; }

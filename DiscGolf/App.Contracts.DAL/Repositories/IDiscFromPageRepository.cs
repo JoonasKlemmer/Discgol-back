@@ -13,8 +13,9 @@ public interface IDiscFromPageRepositoryCustom<TEntity>
 {
     Task<IEnumerable<TEntity>> GetAllSortedAsync(Guid userId);
     Task<IEnumerable<TEntity>> GetAllWithDetails();
-    Task<IEnumerable<TEntity>> GetAllWithDetailsByName(string discName);
-    Task<IEnumerable<TEntity>> GetWithDetailsById(Guid discFromPageId);
+    Task<IEnumerable<TEntity>> GetAllWithDetailsByName(string Name);
+    Task<IEnumerable<TEntity>> GetWithDetailsByDiscId(Guid discId);
+
 
 
 }

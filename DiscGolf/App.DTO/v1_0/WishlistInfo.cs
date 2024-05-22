@@ -1,4 +1,4 @@
-namespace WebApp.DTO;
+namespace App.DTO.v1_0;
 
 public class WishlistInfo
 {

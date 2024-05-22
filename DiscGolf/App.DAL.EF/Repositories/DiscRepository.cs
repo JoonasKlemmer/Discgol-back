@@ -19,15 +19,19 @@ public class DiscRepository : BaseEntityRepository<APPDomain.Disc, DALDTO.Disc, 
         var query = CreateQuery(userId);
         query = query.OrderBy(c => c.Name);
         var res = await query.ToListAsync();
-        return res.Select(e => Mapper.Map(e));
+        return res.Select(e => Mapper.Map(e))!;
     }
 
     public async Task<IEnumerable<DALDTO.Disc>> GetAllDiscs()
     {
         var query = CreateQuery();
-        query = query.Include(d => d.Categories).Include(d => d.Manufacturer);
+        query = query.Include(d => d.Categories).Include(d => d.Manufacturers);
         var res = await query.ToListAsync();
-        return res.Select(e => Mapper.Map(e));
+        foreach (var disc in res)
+        {
+            Console.WriteLine(disc.Manufacturers!.ManufacturerName);
+        }
+        return res.Select(e => Mapper.Map(e))!;
         
     }
 

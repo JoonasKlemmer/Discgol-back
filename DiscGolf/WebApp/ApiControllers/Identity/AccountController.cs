@@ -1,7 +1,9 @@
-using System.Configuration;
+
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
+
+using App.Contracts.BLL;
 using App.DAL.EF;
 using App.Domain.Identity;
 using App.DTO.v1_0;
@@ -15,7 +17,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers.Identity;
-
+/// <summary>
+/// Controller for actions with account
+/// </summary>
 [ApiVersion("1.0")]
 [ApiVersion("0.9", Deprecated = true)]
 [ApiController]
@@ -27,15 +31,25 @@ public class AccountController : ControllerBase
     private readonly SignInManager<AppUser> _signInManager;
     private readonly IConfiguration _configuration;
     private readonly AppDbContext _context;
-
+    private readonly IAppBLL _bll;
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="userManager"></param>
+    /// <param name="logger"></param>
+    /// <param name="signInManager"></param>
+    /// <param name="configuration"></param>
+    /// <param name="context"></param>
+    /// <param name="bll"></param>
     public AccountController(UserManager<AppUser> userManager, ILogger<AccountController> logger,
-        SignInManager<AppUser> signInManager, IConfiguration configuration, AppDbContext context)
+        SignInManager<AppUser> signInManager, IConfiguration configuration, AppDbContext context, IAppBLL bll)
     {
         _userManager = userManager;
         _logger = logger;
         _signInManager = signInManager;
         _configuration = configuration;
         _context = context;
+        _bll = bll;
     }
 
 
@@ -100,7 +114,15 @@ public class AccountController : ControllerBase
                 }
             );
         }
-        
+
+        var wishlist = new App.BLL.DTO.Wishlist
+        {
+            Id = Guid.NewGuid(),
+            WishlistName = registrationData.Firstname + "'s wishlist",
+            AppUserId = appUser.Id
+        };
+        _bll.Wishlists.Add(wishlist);
+        await _context.SaveChangesAsync();
         // save into claims also the user full name
         result = await _userManager.AddClaimsAsync(appUser, new List<Claim>()
         {
@@ -136,9 +158,9 @@ public class AccountController : ControllerBase
         var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(appUser);
         var jwt = IdentityHelpers.GenerateJwt(
             claimsPrincipal.Claims,
-            _configuration.GetValue<string>("JWT:key"),
-            _configuration.GetValue<string>("JWT:issuer"),
-            _configuration.GetValue<string>("JWT:audience"),
+            _configuration.GetValue<string>("JWT:key")!,
+            _configuration.GetValue<string>("JWT:issuer")!,
+            _configuration.GetValue<string>("JWT:audience")!,
             expiresInSeconds
         );
         var res = new JWTResponse()
@@ -152,7 +174,12 @@ public class AccountController : ControllerBase
         return Ok(res);
     }
 
-
+/// <summary>
+/// 
+/// </summary>
+/// <param name="loginInfo">jwt token, refresh token</param>
+/// <param name="expiresInSeconds">to change expire time</param>
+/// <returns>JWTresponse</returns>
     [HttpPost]
     public async Task<ActionResult<JWTResponse>> Login([FromBody] LoginInfo loginInfo,
         [FromQuery]
@@ -187,12 +214,6 @@ public class AccountController : ControllerBase
         }
 
         var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(appUser);
-        if (claimsPrincipal == null)
-        {
-            _logger.LogWarning("WebApi login failed, claimsPrincipal null");
-            await Task.Delay(rnd.Next(100, 1000));
-            return NotFound("User/Password problem");
-        }
 
         if (!_context.Database.ProviderName!.Contains("InMemory"))
         {
@@ -213,9 +234,9 @@ public class AccountController : ControllerBase
 
         var jwt = IdentityHelpers.GenerateJwt(
             claimsPrincipal.Claims,
-            _configuration.GetValue<string>("JWT:key"),
-            _configuration.GetValue<string>("JWT:issuer"),
-            _configuration.GetValue<string>("JWT:audience"),
+            _configuration.GetValue<string>("JWT:key")!,
+            _configuration.GetValue<string>("JWT:issuer")!,
+            _configuration.GetValue<string>("JWT:audience")!,
             expiresInSeconds
         );
 
@@ -226,11 +247,16 @@ public class AccountController : ControllerBase
             FirstName = appUser.FirstName,
             LastName = appUser.LastName
         };
-
+        Console.WriteLine("---------------------LOGIN----------------------------"+ appUser.Id);
         return Ok(responseData);
 
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tokenRefreshInfo">jwt token, refresh token</param>
+    /// <param name="expiresInSeconds">to change expire time</param>
+    /// <returns></returns>
     [HttpPost]
     public async Task<ActionResult<JWTResponse>> RefreshTokenData(
         [FromBody]
@@ -274,9 +300,9 @@ public class AccountController : ControllerBase
 
         if (!IdentityHelpers.ValidateJWT(
                 tokenRefreshInfo.Jwt,
-                _configuration.GetValue<string>("JWT:key"),
-                _configuration.GetValue<string>("JWT:issuer"),
-                _configuration.GetValue<string>("JWT:audience")
+                _configuration.GetValue<string>("JWT:key")!,
+                _configuration.GetValue<string>("JWT:issuer")!,
+                _configuration.GetValue<string>("JWT:audience")!
             ))
         {
             return BadRequest("JWT validation fail");
@@ -329,24 +355,12 @@ public class AccountController : ControllerBase
 
         // get claims based user
         var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(appUser);
-        if (claimsPrincipal == null)
-        {
-            _logger.LogWarning("Could not get ClaimsPrincipal for user {}", userEmail);
-            return NotFound(
-                new RestApiErrorResponse()
-                {
-                    Status = HttpStatusCode.BadRequest,
-                    Error = "User/Password problem"
-                }
-            );
-        }
-
         // generate jwt
         var jwtResponseStr = IdentityHelpers.GenerateJwt(
             claimsPrincipal.Claims,
-            _configuration.GetValue<string>("JWT:key"),
-            _configuration.GetValue<string>("JWT:issuer"),
-            _configuration.GetValue<string>("JWT:audience"),
+            _configuration.GetValue<string>("JWT:key")!,
+            _configuration.GetValue<string>("JWT:issuer")!,
+            _configuration.GetValue<string>("JWT:audience")!,
             expiresInSeconds
         );
 
@@ -368,10 +382,14 @@ public class AccountController : ControllerBase
             Jwt = jwtResponseStr,
             RefreshToken = refreshToken.RefreshToken,
         };
-
+        Console.WriteLine("User Refreshed token");
         return Ok(res);
     }
-
+/// <summary>
+/// 
+/// </summary>
+/// <param name="logout"></param>
+/// <returns></returns>
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost]
     public async Task<ActionResult> Logout(
@@ -383,6 +401,7 @@ public class AccountController : ControllerBase
         // so client can actually continue to use the jwt until it expires (keep the jwt expiration time short ~1 min)
 
         var userIdStr = _userManager.GetUserId(User);
+
         if (userIdStr == null)
         {
             return BadRequest(
@@ -394,7 +413,7 @@ public class AccountController : ControllerBase
             );
         }
 
-        if (Guid.TryParse(userIdStr, out var userId))
+        if (!Guid.TryParse(userIdStr, out var userId))
         {
             return BadRequest("Deserialization error");
         }
@@ -428,7 +447,7 @@ public class AccountController : ControllerBase
         }
 
         var deleteCount = await _context.SaveChangesAsync();
-
+        Console.WriteLine("User Logged out");
         return Ok(new {TokenDeleteCount = deleteCount});
     }
 }

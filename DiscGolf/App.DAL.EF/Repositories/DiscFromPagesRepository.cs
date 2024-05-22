@@ -30,7 +30,7 @@ public class DiscFromPagesRepository : BaseEntityRepository<APPDomain.DiscFromPa
         var query = CreateQuery();
         query = query
             .Include(c => c.Discs)
-            .ThenInclude(c => c!.Manufacturer)
+            .ThenInclude(c => c!.Manufacturers)
             .Include(c => c.Discs!.Categories)
             .Include(c => c.Websites)
             .Include(c => c.PriceValue);
@@ -39,36 +39,34 @@ public class DiscFromPagesRepository : BaseEntityRepository<APPDomain.DiscFromPa
         return res.Select(e => Mapper.Map(e))!;
     }
     
-    public async Task<IEnumerable<DALDTO.DiscFromPage>> GetAllWithDetailsByName(string discName)
+    public async Task<IEnumerable<DALDTO.DiscFromPage>> GetAllWithDetailsByName(string Name)
     {
         var query = CreateQuery();
         
         query = query
             .Include(c => c.Discs)
-            .ThenInclude(c => c!.Manufacturer)
+            .ThenInclude(c => c!.Manufacturers)
             .Include(c => c.Discs!.Categories)
             .Include(c => c.Websites)
             .Include(c => c.PriceValue)
-            .Where(c => c.Discs!.Name.ToLower().Contains(discName.ToLower()));
+            .Where(c => c.Discs!.Name.ToLower().Contains(Name.ToLower()));
         
         var res = await query.ToListAsync();
         return res.Select(e => Mapper.Map(e))!;
     }
     
-    public async Task<IEnumerable<DALDTO.DiscFromPage>> GetWithDetailsById(Guid discFromPageId)
+    public async Task<IEnumerable<DALDTO.DiscFromPage>> GetWithDetailsByDiscId(Guid discId)
     {
         var query = CreateQuery();
         
         query = query
             .Include(c => c.Discs)
-            .ThenInclude(c => c!.Manufacturer)
+            .ThenInclude(c => c!.Manufacturers)
             .Include(c => c.Discs!.Categories)
             .Include(c => c.Websites)
             .Include(c => c.PriceValue)
-            .Where(c => c.Id == discFromPageId);
-        var res = await query.FirstOrDefaultAsync();
-        var result =  Mapper.Map(res);
-        return new[] { result };
-
+            .Where(c => c.DiscId == discId);
+        var res = await query.ToListAsync();
+        return res.Select(e => Mapper.Map(e))!;
     }
 }

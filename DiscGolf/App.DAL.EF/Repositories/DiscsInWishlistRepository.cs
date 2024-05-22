@@ -22,19 +22,35 @@ public class DiscsInWishlistRepository : BaseEntityRepository<APPDomain.DiscsInW
         return res.Select(e => Mapper.Map(e));
     }
     
-    public async Task<IEnumerable<DALDTO.DiscsInWishlist>> GetAllWithDetails(Guid userId,Guid wishlistId)
+    public async Task<IEnumerable<DALDTO.DiscsInWishlist>> GetAllWithDetails(Guid userId)
     {
         var query = CreateQuery(userId);
     
-        query = query.Where(c => c.Wishlists!.AppUserId == userId && c.Wishlists!.Id == wishlistId);
+        query = query.Where(c => c.Wishlists!.AppUserId == userId);
         query = query
             .Include(c => c.DiscFromPage)
-            .ThenInclude(c => c!.Discs).ThenInclude(c => c!.Manufacturer)
+            .ThenInclude(c => c!.Discs).ThenInclude(c => c!.Manufacturers)
             .Include(c => c.Wishlists)
             .Include(c => c.DiscFromPage).ThenInclude(c => c!.Discs!.Categories)
             .Include(c => c.DiscFromPage).ThenInclude(c => c!.Websites);
     
         var res = await query.ToListAsync();
         return res.Select(e => Mapper.Map(e))!;
+    }
+    
+    public async Task<bool> GetDiscInWishlistById(Guid discFromPageId, Guid wishlistId)
+    {
+        var query = CreateQuery();
+    
+        query = query.Where(c => c.DiscFromPageId == discFromPageId &&  c.WishlistId == wishlistId );
+        query = query
+            .Include(c => c.DiscFromPage)
+            .ThenInclude(c => c!.Discs).ThenInclude(c => c!.Manufacturers)
+            .Include(c => c.Wishlists)
+            .Include(c => c.DiscFromPage).ThenInclude(c => c!.Discs!.Categories)
+            .Include(c => c.DiscFromPage).ThenInclude(c => c!.Websites);
+    
+        var res = await query.ToListAsync();
+        return res.Count == 1;
     }
 }

@@ -26,12 +26,16 @@ public class DiscsInWishlistService :
         return (await Repository.GetAllSortedAsync(userId)).Select(e => Mapper.Map(e))!;
     }
 
+    public async Task<bool> GetDiscInWishlistById(Guid discFromPageId, Guid wishlistId)
+    {
+        return (await Repository.GetDiscInWishlistById(discFromPageId, wishlistId));
+    }
     
 
 
-    public async Task<List<DiscWithDetails>> GetAllWithDetails(Guid userId, Guid wishlistId)
+    public async Task<List<DiscWithDetails>> GetAllWithDetails(Guid userId)
     {
-        var discs = (await Repository.GetAllWithDetails(userId, wishlistId)).ToList();
+        var discs = (await Repository.GetAllWithDetails(userId)).ToList();
         var discWd = new List<DiscWithDetails>();
         foreach (var disc in discs)
         {

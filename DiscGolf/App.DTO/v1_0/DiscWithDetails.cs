@@ -4,7 +4,7 @@ public class DiscWithDetails
 {
     public Guid DiscFromPageId { get; set; }
     public Guid DiscsInWishlistId { get; set; } = Guid.Empty;
-    public string DiscName { get; set; } = default!;
+    public string Name { get; set; } = default!;
     
     public double Speed { get; set; }
     public double Glide { get; set; }
