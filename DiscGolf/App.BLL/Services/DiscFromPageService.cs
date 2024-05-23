@@ -57,13 +57,14 @@ namespace App.BLL.Services
 
         public async Task<List<DiscWithDetails>> GetAllDiscData(List<DiscFromPage> discFromPages)
         {
+            
             return await Task.Run(() =>
             {
                 var discWd = new List<DiscWithDetails>();
                 foreach (var discFromPage in discFromPages)
                 {
                     var currentDisc = discFromPage.Discs;
-                    var website = discFromPage.Websites!.Url;
+                    var website = discFromPage.Websites;
                     var manufacturerName = currentDisc!.Manufacturers!.ManufacturerName;
                     var categoryName = currentDisc.Categories!.CategoryName;
 
@@ -78,7 +79,8 @@ namespace App.BLL.Services
                         ManufacturerName = manufacturerName,
                         CategoryName = categoryName,
                         DiscPrice = discFromPage.Price,
-                        PageUrl = website
+                        PictureUrl = website!.WebsiteName,
+                        PageUrl = website.Url
                     };
 
                     discWd.Add(discWithDetails);

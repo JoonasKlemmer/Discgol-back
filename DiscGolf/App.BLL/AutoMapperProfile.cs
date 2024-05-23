@@ -23,6 +23,7 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.ManufacturerName, opt => opt.MapFrom(src => src.Discs!.Manufacturers!.ManufacturerName))
             .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Discs!.Categories!.CategoryName))
             .ForMember(dest => dest.DiscPrice, opt => opt.MapFrom(src => src.Price))
+            .ForMember(dest => dest.PictureUrl, opt => opt.MapFrom(src => src.Websites!.WebsiteName))
             .ForMember(dest => dest.PageUrl, opt => opt.MapFrom(src => src.Websites!.Url));
         
         CreateMap<App.DAL.DTO.DiscsInWishlist, App.BLL.DTO.DiscWithDetails>()

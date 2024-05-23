@@ -15,5 +15,6 @@ public class DiscWithDetails
     public string? CategoryName { get; set; } = default!;
     public double? DiscPrice { get; set; } = default!;
     public string? PageUrl { get; set; } = default!;
+    public string? PictureUrl { get; set; } = default!;
     
 }
