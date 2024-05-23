@@ -1,6 +1,6 @@
 using AutoMapper;
 namespace App.BLL;
-
+// Trying to push from other PC
 public class AutoMapperProfile : Profile
 {
     public AutoMapperProfile()
