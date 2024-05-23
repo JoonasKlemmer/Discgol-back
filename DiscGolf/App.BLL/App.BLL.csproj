@@ -25,11 +25,4 @@
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.2" />
     </ItemGroup>
 
-
-    <ItemGroup>
-      <Reference Include="WebApp">
-        <HintPath>..\App.Test\bin\Debug\net8.0\WebApp.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
 </Project>

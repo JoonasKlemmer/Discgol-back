@@ -55,13 +55,27 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Disc disc)
         {
-            if (ModelState.IsValid)
+            
+            foreach (var key in ModelState.Keys)
             {
+                var state = ModelState[key];
+                foreach (var error in state!.Errors)
+                {
+                    Console.WriteLine($"Error in {key}: {error.ErrorMessage}");
+                }
+            }
+
+            if (ModelState.IsValid)
+            {   
+                Console.WriteLine("----------------1--------------------");
                 disc.Id = Guid.NewGuid();
                 _bll.Discs.Add(disc);
+                Console.WriteLine("----------------2--------------------");
                 await _bll.SaveChangesAsync();
+                Console.WriteLine("----------------3--------------------");
                 return RedirectToAction(nameof(Index));
             }
+            Console.WriteLine("----------------4--------------------");
             ViewData["CategoryId"] = new SelectList(await _bll.Categories.GetAllAsync(), "Id", "CategoryName", disc.CategoryId);
             ViewData["ManufacturerId"] = new SelectList(await _bll.Manufacturers.GetAllAsync(), "Id", "Location", disc.ManufacturerId);
             return View(disc);

@@ -7,10 +7,7 @@ public class AutoMapperProfile : Profile
     {
         CreateMap<App.DAL.DTO.Category, App.BLL.DTO.Category>().ReverseMap();
         CreateMap<App.DAL.DTO.Wishlist, App.BLL.DTO.Wishlist>().ReverseMap();
-        CreateMap<App.DAL.DTO.Disc, App.BLL.DTO.Disc>()
-            .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Categories!.CategoryName))
-            .ForMember(dest => dest.ManufacturerName, opt => opt.MapFrom(src => src.Manufacturers!.ManufacturerName))
-            .ReverseMap();
+        CreateMap<App.DAL.DTO.Disc, App.BLL.DTO.Disc>().ReverseMap();
         CreateMap<App.DAL.DTO.DiscFromPage, App.BLL.DTO.DiscFromPage>().ReverseMap();
         CreateMap<App.DAL.DTO.DiscsInWishlist, App.BLL.DTO.DiscsInWishlist>().ReverseMap();
         CreateMap<App.DAL.DTO.Manufacturer, App.BLL.DTO.Manufacturer>().ReverseMap();
