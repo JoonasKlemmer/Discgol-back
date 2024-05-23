@@ -186,13 +186,17 @@ public class AccountController : ControllerBase
         int expiresInSeconds
     )
     {
-        Random rnd = new Random();
         
-        if (expiresInSeconds <= 0) expiresInSeconds = int.MaxValue;
-        expiresInSeconds = expiresInSeconds < _configuration.GetValue<int>("JWT:expiresInSeconds")
-            ? expiresInSeconds
-            : _configuration.GetValue<int>("JWT:expiresInSeconds");
-
+        if (expiresInSeconds > 0)
+        {
+            Console.WriteLine("---------------------------------------expire-----------------------------" + expiresInSeconds);
+        }
+        else
+        {
+            // Use the default expiration time from the configuration file
+            expiresInSeconds = _configuration.GetValue<int>("JWT:expiresInSeconds");
+        }
+        Random rnd = new Random();
         
         // verify user
         var appUser = await _userManager.FindByEmailAsync(loginInfo.Email);
@@ -247,7 +251,7 @@ public class AccountController : ControllerBase
             FirstName = appUser.FirstName,
             LastName = appUser.LastName
         };
-        Console.WriteLine("---------------------LOGIN----------------------------"+ appUser.Id);
+
         return Ok(responseData);
 
     }
@@ -265,10 +269,15 @@ public class AccountController : ControllerBase
         int expiresInSeconds
     )
     {
-        if (expiresInSeconds <= 0) expiresInSeconds = int.MaxValue;
-        expiresInSeconds = expiresInSeconds < _configuration.GetValue<int>("JWT:expiresInSeconds")
-            ? expiresInSeconds
-            : _configuration.GetValue<int>("JWT:expiresInSeconds");
+        if (expiresInSeconds > 0)
+        {
+            Console.WriteLine("---------------------------------------expire-----------------------------" + expiresInSeconds);
+        }
+        else
+        {
+            // Use the default expiration time from the configuration file
+            expiresInSeconds = _configuration.GetValue<int>("JWT:expiresInSeconds");
+        }
 
         // extract jwt object
         JwtSecurityToken? jwt;

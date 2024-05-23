@@ -53,36 +53,40 @@ namespace App.BLL.Services
             return discsFromPage.Select(disc => _mapper.Map<DiscFromPage>(disc));
         }
 
+
+
         public async Task<List<DiscWithDetails>> GetAllDiscData(List<DiscFromPage> discFromPages)
         {
-            var discWd = new List<DiscWithDetails>();
-            foreach (var discFromPage in discFromPages)
+            return await Task.Run(() =>
             {
-
-                var currentDisc = discFromPage.Discs;
-                var website = discFromPage.Websites!.Url;
-                var manufacturerName = currentDisc!.Manufacturers!.ManufacturerName;
-                var categoryName = currentDisc.Categories!.CategoryName;
-
-
-                var discWithDetails = new DiscWithDetails
+                var discWd = new List<DiscWithDetails>();
+                foreach (var discFromPage in discFromPages)
                 {
-                    DiscFromPageId = discFromPage.Id,
-                    Name = currentDisc.Name,
-                    Speed = currentDisc.Speed,
-                    Glide = currentDisc.Glide,
-                    Turn = currentDisc.Turn,
-                    Fade = currentDisc.Fade,
-                    ManufacturerName = manufacturerName,
-                    CategoryName = categoryName,
-                    DiscPrice = discFromPage.Price,
-                    PageUrl = website
-                };
+                    var currentDisc = discFromPage.Discs;
+                    var website = discFromPage.Websites!.Url;
+                    var manufacturerName = currentDisc!.Manufacturers!.ManufacturerName;
+                    var categoryName = currentDisc.Categories!.CategoryName;
 
-                discWd.Add(discWithDetails);
-            }
+                    var discWithDetails = new DiscWithDetails
+                    {
+                        DiscFromPageId = discFromPage.Id,
+                        Name = currentDisc.Name,
+                        Speed = currentDisc.Speed,
+                        Glide = currentDisc.Glide,
+                        Turn = currentDisc.Turn,
+                        Fade = currentDisc.Fade,
+                        ManufacturerName = manufacturerName,
+                        CategoryName = categoryName,
+                        DiscPrice = discFromPage.Price,
+                        PageUrl = website
+                    };
 
-            return discWd;
+                    discWd.Add(discWithDetails);
+                }
+
+                return discWd;
+            });
         }
+
     }
 }
