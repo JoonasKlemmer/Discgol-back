@@ -100,7 +100,7 @@ namespace WebApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PriceExists(price.Id))
+                    if (await PriceExists(price.Id))
                     {
                         return NotFound();
                     }
@@ -139,16 +139,16 @@ namespace WebApp.Controllers
             var price = await _bll.Prices.FirstOrDefaultAsync(id);
             if (price != null)
             {
-                 _bll.Prices.Remove(price);
+              await _bll.Prices.RemoveAsync(price);
             }
 
             await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PriceExists(Guid id)
+        private Task<bool> PriceExists(Guid id)
         {
-            return _bll.Prices.Exists(id);
+            return _bll.Prices.ExistsAsync(id);
         }
     }
 }

@@ -19,10 +19,10 @@ namespace App.BLL.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<DiscFromPage>> GetAllSortedAsync(Guid userId)
+        public async Task<IEnumerable<DiscFromPage>> GetAllSortedAsync()
         {
 
-            var discsFromPage = await Repository.GetAllSortedAsync(userId);
+            var discsFromPage = await Repository.GetAllSortedAsync();
 
 
             return discsFromPage.Select(disc => _mapper.Map<DiscFromPage>(disc));
@@ -35,10 +35,10 @@ namespace App.BLL.Services
             return discsFromPage.Select(disc => _mapper.Map<DiscFromPage>(disc));
         }
 
-        public async Task<IEnumerable<DiscFromPage>> GetAllWithDetailsByName(string Name)
+        public async Task<IEnumerable<DiscFromPage>> GetAllWithDetailsByName(string name)
         {
 
-            var discsFromPage = await Repository.GetAllWithDetailsByName(Name);
+            var discsFromPage = await Repository.GetAllWithDetailsByName(name);
             
             return discsFromPage.Select(disc => _mapper.Map<DiscFromPage>(disc));
         }

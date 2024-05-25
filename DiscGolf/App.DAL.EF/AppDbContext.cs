@@ -25,6 +25,8 @@ public class AppDbContext: IdentityDbContext<AppUser, AppRole, Guid, IdentityUse
     {
     }
     
+
+    
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
     {
         foreach (var entity in ChangeTracker.Entries().Where(e => e.State != EntityState.Deleted))

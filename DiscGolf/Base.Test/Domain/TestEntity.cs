@@ -7,8 +7,8 @@ namespace Base.Test.Domain;
 
 public class TestEntity : BaseEntityId //, IDomainAppUser<IdentityUser<Guid>>, IDomainAppUserId<Guid>
 {
+    //public Guid AppUserId { get; set; }
     [MaxLength(128)]
     public string Value { get; set; } = default!;
-    //public Guid AppUserId { get; set; }
     //public IdentityUser<Guid>? AppUser { get; set; }
 }

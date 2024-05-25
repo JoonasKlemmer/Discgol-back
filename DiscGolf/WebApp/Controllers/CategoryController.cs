@@ -100,7 +100,7 @@ namespace WebApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoryExists(category.Id))
+                    if (await CategoryExists(category.Id))
                     {
                         return NotFound();
                     }
@@ -140,16 +140,16 @@ namespace WebApp.Controllers
             var category = await _bll.Categories.FirstOrDefaultAsync(id);
             if (category != null)
             {
-                _bll.Categories.Remove(category);
+                await _bll.Categories.RemoveAsync(category);
             }
 
             await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CategoryExists(Guid id)
+        private async Task<bool> CategoryExists(Guid id)
         {
-            return _bll.Categories.Exists(id);
+            return await _bll.Categories.ExistsAsync(id);
         }
     }
 }

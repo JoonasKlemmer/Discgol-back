@@ -11,7 +11,7 @@ public interface IDiscFromPageRepository : IEntityRepository<DALDTO.DiscFromPage
 // define your shared (with bll) custom methods here
 public interface IDiscFromPageRepositoryCustom<TEntity>
 {
-    Task<IEnumerable<TEntity>> GetAllSortedAsync(Guid userId);
+    Task<IEnumerable<TEntity>> GetAllSortedAsync();
     Task<IEnumerable<TEntity>> GetAllWithDetails();
     Task<IEnumerable<TEntity>> GetAllWithDetailsByName(string Name);
     Task<IEnumerable<TEntity>> GetWithDetailsByDiscId(Guid discId);

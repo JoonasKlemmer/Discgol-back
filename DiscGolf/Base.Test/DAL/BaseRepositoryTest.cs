@@ -2,16 +2,19 @@ using AutoMapper;
 using Base.DAL.EF;
 using Base.Test.Domain;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace Base.Test.DAL;
 
 public class BaseRepositoryTest
 {
+    private readonly ITestOutputHelper _testOutputHelper;
     private readonly TestDbContext _ctx;
     private readonly TestEntityRepository _testEntityRepository;
 
-    public BaseRepositoryTest()
+    public BaseRepositoryTest(ITestOutputHelper testOutputHelper)
     {
+        _testOutputHelper = testOutputHelper;
         // set up mock database - inmemory
         var optionsBuilder = new DbContextOptionsBuilder<TestDbContext>();
 
@@ -35,16 +38,19 @@ public class BaseRepositoryTest
 
 
     [Fact]
-    public async Task Test1()
+    public async Task TestAdd()
     {
+
         // arrange
-        _testEntityRepository.Add(new TestEntity() {Value = "Foo"});
-        _ctx.SaveChanges();
+        var entity = new TestEntity { Value = "Foo" };
+        _testEntityRepository.Add(entity);
+        await _ctx.SaveChangesAsync();
 
         // act
         var data = await _testEntityRepository.GetAllAsync();
 
         // assert
-        Assert.Equal(1, data.Count());
+        Assert.Single(data);
+
     }
 }

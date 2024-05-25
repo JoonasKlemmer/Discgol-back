@@ -100,7 +100,7 @@ namespace WebApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!WebsiteExists(website.Id))
+                    if (await WebsiteExists(website.Id))
                     {
                         return NotFound();
                     }
@@ -140,16 +140,16 @@ namespace WebApp.Controllers
             var website = await _bll.Websites.FirstOrDefaultAsync(id);
             if (website != null)
             {
-                _bll.Websites.Remove(website);
+                await _bll.Websites.RemoveAsync(website);
             }
 
             await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool WebsiteExists(Guid id)
+        private Task<bool> WebsiteExists(Guid id)
         {
-            return _bll.Websites.Exists(id);
+            return _bll.Websites.ExistsAsync(id);
         }
     }
 }

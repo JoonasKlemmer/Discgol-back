@@ -42,10 +42,10 @@ namespace WebApp.Controllers
         }
 
         // GET: DiscsInWishlist/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["DiscFromPageId"] = new SelectList(_bll.DiscFromPages.GetAll(), "Id", "Id");
-            ViewData["WishlistId"] = new SelectList(_bll.Wishlists.GetAll(), "Id", "WishlistName");//useri id tuleb siia
+            ViewData["DiscFromPageId"] = new SelectList(await _bll.DiscFromPages.GetAllAsync(), "Id", "Id");
+            ViewData["WishlistId"] = new SelectList(await _bll.Wishlists.GetAllAsync(), "Id", "WishlistName");//useri id tuleb siia
             return View();
         }
 
@@ -107,7 +107,7 @@ namespace WebApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DiscsInWishlistExists(discsInWishlist.Id))
+                    if (await DiscsInWishlistExists(discsInWishlist.Id))
                     {
                         return NotFound();
                     }
@@ -148,16 +148,16 @@ namespace WebApp.Controllers
             var discsInWishlist = await _bll.DiscsInWishlists.FirstOrDefaultAsync(id);
             if (discsInWishlist != null)
             {
-                _bll.DiscsInWishlists.Remove(discsInWishlist);
+                await _bll.DiscsInWishlists.RemoveAsync(discsInWishlist);
             }
 
             await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool DiscsInWishlistExists(Guid id)
+        private Task<bool> DiscsInWishlistExists(Guid id)
         {
-            return _bll.DiscsInWishlists.Exists(id);
+            return _bll.DiscsInWishlists.ExistsAsync(id);
         }
     }
 }

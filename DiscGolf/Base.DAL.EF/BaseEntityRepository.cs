@@ -67,45 +67,7 @@ public class BaseEntityRepository<TKey, TDomainEntity, TDalEntity, TDbContext>
     {
         return Mapper.Map(RepoDbSet.Update(Mapper.Map(entity)).Entity)!;
     }
-
-    public virtual int Remove(TDalEntity entity, TKey? userId = default)
-    {
-        if (userId == null)
-        {
-            return RepoDbSet.Where(e => e.Id.Equals(entity.Id)).ExecuteDelete();
-        }
-
-        return CreateQuery(userId)
-            .Where(e => e.Id.Equals(entity.Id))
-            .ExecuteDelete();
-    }
-
-    public virtual int Remove(TKey id, TKey userId = default)
-    {
-        if (userId == null)
-        {
-            return RepoDbSet
-                .Where(e => e.Id.Equals(id))
-                .ExecuteDelete();
-        }
-
-        return CreateQuery(userId)
-            .Where(e => e.Id.Equals(id))
-            .ExecuteDelete();
-    }
-
     
-    public virtual IEnumerable<TDalEntity> GetAll(TKey userId = default, bool noTracking = true)
-    {
-        return CreateQuery(userId, noTracking).ToList().Select(de => Mapper.Map(de));
-    }
-
-    public virtual bool Exists(TKey id, TKey userId = default)
-    {
-        return CreateQuery(userId).Any(e => e.Id.Equals(id));
-    }
-
-
     public virtual async Task<IEnumerable<TDalEntity>> GetAllAsync(TKey userId = default, bool noTracking = true)
     {
         return (await CreateQuery(userId, noTracking).ToListAsync())
@@ -139,15 +101,9 @@ public class BaseEntityRepository<TKey, TDomainEntity, TDalEntity, TDbContext>
         }
 
         return await CreateQuery(userId)
-            .Where(e => e.Id.Equals(id))
-            .ExecuteDeleteAsync();
+            .Where(e => e.Id.Equals(id)).ExecuteDeleteAsync();
     }
     
-    public TDalEntity? FirstOrDefault(TKey id, TKey userId = default, bool noTracking = true)
-    {
-        return Mapper.Map(CreateQuery(userId, noTracking).FirstOrDefault(m => m.Id.Equals(id)));
-    }
-
     public async Task<TDalEntity?> FirstOrDefaultAsync(TKey id, TKey userId = default, bool noTracking = true)
     {
         return Mapper.Map(await CreateQuery(userId, noTracking).FirstOrDefaultAsync(m => m.Id.Equals(id)));

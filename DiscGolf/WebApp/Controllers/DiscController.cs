@@ -41,10 +41,10 @@ namespace WebApp.Controllers
         }
 
         // GET: Disc/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["CategoryId"] = new SelectList(_bll.Categories.GetAll(), "Id", "CategoryName");
-            ViewData["ManufacturerId"] = new SelectList(_bll.Manufacturers.GetAll(), "Id", "Location");
+            ViewData["CategoryId"] =  new SelectList(await _bll.Categories.GetAllAsync(), "Id", "CategoryName");
+            ViewData["ManufacturerId"] = new SelectList(await _bll.Manufacturers.GetAllAsync(), "Id", "Location");
             return View();
         }
 
@@ -120,7 +120,7 @@ namespace WebApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DiscExists(disc.Id))
+                    if (await DiscExists(disc.Id))
                     {
                         return NotFound();
                     }
@@ -161,16 +161,16 @@ namespace WebApp.Controllers
             var disc = await _bll.Discs.FirstOrDefaultAsync(id);
             if (disc != null)
             {
-                _bll.Discs.Remove(disc);
+                await _bll.Discs.RemoveAsync(disc);
             }
 
             await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool DiscExists(Guid id)
+        private Task<bool> DiscExists(Guid id)
         {
-            return _bll.Discs.Exists(id);
+            return _bll.Discs.ExistsAsync(id);
         }
     }
 }

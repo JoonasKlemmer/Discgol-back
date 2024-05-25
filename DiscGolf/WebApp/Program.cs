@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Npgsql;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using WebApp;
@@ -31,6 +32,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IAppUnitOfWork, AppUOW>();
 builder.Services.AddScoped<IAppBLL, AppBLL>();
+
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -180,7 +182,10 @@ static void SetupAppData(WebApplication app)
     using var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
     using var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
     
-
+    JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+    {
+        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+    };
     var res = roleManager.CreateAsync(new AppRole()
     {
         Name = "Admin"

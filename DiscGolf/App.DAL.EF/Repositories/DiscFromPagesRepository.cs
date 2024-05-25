@@ -16,9 +16,9 @@ public class DiscFromPagesRepository : BaseEntityRepository<APPDomain.DiscFromPa
     {
     }
     
-    public async Task<IEnumerable<DALDTO.DiscFromPage>> GetAllSortedAsync(Guid userId)
+    public async Task<IEnumerable<DALDTO.DiscFromPage>> GetAllSortedAsync()
     {
-        var query = CreateQuery(userId);
+        var query = CreateQuery();
         query = query.OrderBy(c => c.Price);
         var res = await query.ToListAsync();
         return res.Select(e => Mapper.Map(e));
@@ -39,7 +39,7 @@ public class DiscFromPagesRepository : BaseEntityRepository<APPDomain.DiscFromPa
         return res.Select(e => Mapper.Map(e))!;
     }
     
-    public async Task<IEnumerable<DALDTO.DiscFromPage>> GetAllWithDetailsByName(string Name)
+    public async Task<IEnumerable<DALDTO.DiscFromPage>> GetAllWithDetailsByName(string name)
     {
         var query = CreateQuery();
         
@@ -49,7 +49,7 @@ public class DiscFromPagesRepository : BaseEntityRepository<APPDomain.DiscFromPa
             .Include(c => c.Discs!.Categories)
             .Include(c => c.Websites)
             .Include(c => c.PriceValue)
-            .Where(c => c.Discs!.Name.ToLower().Contains(Name.ToLower()));
+            .Where(c => c.Discs!.Name.ToLower().Contains(name.ToLower()));
         
         var res = await query.ToListAsync();
         return res.Select(e => Mapper.Map(e))!;

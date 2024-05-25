@@ -43,11 +43,11 @@ namespace WebApp.Controllers
         }
 
         // GET: DiscFromPage/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["DiscId"] = new SelectList(_bll.Discs.GetAll(), "Id", "Name");
-            ViewData["PriceId"] = new SelectList(_bll.Prices.GetAll(), "Id", "Iso");
-            ViewData["WebsiteId"] = new SelectList(_bll.Websites.GetAll(), "Id", "Url");
+            ViewData["DiscId"] = new SelectList(await _bll.Discs.GetAllAsync(), "Id", "Name");
+            ViewData["PriceId"] = new SelectList(await _bll.Prices.GetAllAsync(), "Id", "Iso");
+            ViewData["WebsiteId"] = new SelectList(await _bll.Websites.GetAllAsync(), "Id", "Url");
             return View();
         }
 
@@ -111,7 +111,7 @@ namespace WebApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DiscFromPageExists(discFromPage.Id))
+                    if (await DiscFromPageExists(discFromPage.Id))
                     {
                         return NotFound();
                     }
@@ -153,16 +153,16 @@ namespace WebApp.Controllers
             var discFromPage = await _bll.DiscFromPages.FirstOrDefaultAsync(id);
             if (discFromPage != null)
             {
-                _bll.DiscFromPages.Remove(discFromPage);
+               await _bll.DiscFromPages.RemoveAsync(discFromPage);
             }
 
             await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool DiscFromPageExists(Guid id)
+        private Task<bool> DiscFromPageExists(Guid id)
         {
-            return _bll.DiscFromPages.Exists(id);
+            return _bll.DiscFromPages.ExistsAsync(id);
         }
     }
 }
