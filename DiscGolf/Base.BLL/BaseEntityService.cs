@@ -54,7 +54,7 @@ public class BaseEntityService<TDalEntity, TBllEntity, TRepository, TKey> : IEnt
 
     public async Task<bool> ExistsAsync(TKey id, TKey? userId = default)
     {
-        return await Repository.ExistsAsync(userId);
+        return await Repository.ExistsAsync(id,userId);
     }
 
     public async Task<int> RemoveAsync(TBllEntity entity, TKey? userId = default)

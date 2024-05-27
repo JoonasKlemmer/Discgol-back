@@ -1,19 +1,25 @@
+using App.BLL.DTO;
+using App.BLL.Services;
 using App.DAL.EF;
 using App.DAL.EF.Repositories;
-using App.Domain;
 using AutoMapper;
+using Base.Contracts.DAL;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+using Category = App.Domain.Category;
+using Disc = App.Domain.Disc;
+using DiscFromPage = App.Domain.DiscFromPage;
+using Manufacturer = App.Domain.Manufacturer;
+using Price = App.Domain.Price;
+using Website = App.Domain.Website;
 
-namespace Tests.Unit
+namespace App.Test.Unit
 {
-    public class DiscFromPageRepositoryTests
+    public class DiscFromPageServiceTests
     {
         private readonly AppDbContext _ctx;
-        private readonly DiscFromPagesRepository _discFromPagesRepository;
-        private readonly IMapper _mapper;
+        private readonly DiscFromPageService _service;
 
-       
+
         private readonly Guid _categoryDistanceId = Guid.NewGuid();
         private readonly Guid _categoryPutterId = Guid.NewGuid();
         private readonly Guid _manufacturerInnovaId = Guid.NewGuid();
@@ -32,40 +38,44 @@ namespace Tests.Unit
         private readonly Guid _nightJarFromDisctroyerPageId = Guid.NewGuid();
         private readonly Guid _lunaFromDiscraftPageId = Guid.NewGuid();
         private readonly Guid _lunaFromDiscsportPageId = Guid.NewGuid();
-        
-        public DiscFromPageRepositoryTests()
-        {
 
+
+        public DiscFromPageServiceTests()
+        {
+            // Configure AutoMapper with profiles
+            var mapperConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new App.BLL.AutoMapperProfile());
+                cfg.AddProfile(new App.DAL.EF.AutoMapperProfile());
+            });
+            var mapper = mapperConfig.CreateMapper();
+
+            // Set up mock database - in-memory
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
             optionsBuilder.UseInMemoryDatabase(Guid.NewGuid().ToString());
-
             _ctx = new AppDbContext(optionsBuilder.Options);
+
+            // Reset db
             _ctx.Database.EnsureDeleted();
             _ctx.Database.EnsureCreated();
-            
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<AutoMapperProfile>();
-            });
-            _mapper = config.CreateMapper();
 
-            _discFromPagesRepository = new DiscFromPagesRepository(_ctx, _mapper);
+            // Make repository
+            DiscFromPagesRepository repository = new(_ctx, mapper);
+
+            // Make service
+            IUnitOfWork uow = new AppUOW(_ctx, mapper);
+            _service = new DiscFromPageService(uow, repository, mapper);
+
             SeedTheData();
-            
-            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
-            {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            };
-
         }
         
         [Fact]
         public async Task Test_GetAllSortedAsync()
         {
             //arrange
-            var sortedDiscs = (await _discFromPagesRepository.GetAllSortedAsync()).ToList();
+            var sortedDiscs = (await _service.GetAllSortedAsync()).ToList();
             var cheapestDisc = sortedDiscs[0].Price;
-            var mostExpensiveDisc = sortedDiscs[sortedDiscs.Count() - 1 ].Price;
+            var mostExpensiveDisc = sortedDiscs[^1 ].Price;
             
             //act
             //assert
@@ -77,7 +87,7 @@ namespace Tests.Unit
         public async Task Test_GetAllWithDetails()
         {
             //arrange
-            var discsWithDetails = (await _discFromPagesRepository.GetAllWithDetails()).ToList();
+            var discsWithDetails = (await _service.GetAllWithDetails()).ToList();
             //act
             //assert
             Assert.NotNull(discsWithDetails[0].Discs!.Manufacturers!.ManufacturerName);
@@ -88,7 +98,7 @@ namespace Tests.Unit
         {
             //arrange
             var discName = "Luna"; //disc added with seeding
-            var discsWithDetails = (await _discFromPagesRepository.GetAllWithDetailsByName(discName)).ToList();
+            var discsWithDetails = (await _service.GetAllWithDetailsByName(discName)).ToList();
             
             //act
             //assert
@@ -105,12 +115,32 @@ namespace Tests.Unit
         public async Task Test_GetAllWithDetailsById()
         {
             //arrange
-            var discsWithDetails = (await _discFromPagesRepository.GetWithDetailsByDiscId(_destroyerId)).ToList();
+            var discsWithDetails = (await _service.GetWithDetailsByDiscId(_destroyerId)).ToList();
             //act
             //assert
             Assert.Single(discsWithDetails);
         }
         
+        [Fact]
+        public async Task Test_GetAllDiscData()
+        {
+            //arrange
+            var discsWithDetails = (await _service.GetWithDetailsByDiscId(_destroyerId)).ToList();
+            //act
+            var allDiscData = await _service.GetAllDiscData(discsWithDetails);
+            
+            // Assert
+            Assert.NotNull(allDiscData); 
+            Assert.NotEmpty(allDiscData);
+            Assert.All(allDiscData, item => 
+            {
+                Assert.IsType<DiscWithDetails>(item);
+                Assert.NotNull(item.ManufacturerName);
+            });
+           
+        }
+        
+       
         private void SeedTheData()
         {
             SeedCategories();

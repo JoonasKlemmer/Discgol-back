@@ -172,16 +172,19 @@ app.Run();
 
 static void SetupAppData(WebApplication app)
 {
-    using var serviceScope = ((IApplicationBuilder) app).ApplicationServices
+    using var serviceScope = ((IApplicationBuilder)app).ApplicationServices
         .GetRequiredService<IServiceScopeFactory>()
         .CreateScope();
     using var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-    context.Database.Migrate();
+    if (context.Database.IsRelational())
+    {
+        context.Database.Migrate();
+    }
 
     using var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
     using var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
-    
+
     JsonConvert.DefaultSettings = () => new JsonSerializerSettings
     {
         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -209,10 +212,10 @@ static void SetupAppData(WebApplication app)
         Console.WriteLine(res.ToString());
     }
 
-
     res = userManager.AddToRoleAsync(user, "Admin").Result;
     if (!res.Succeeded)
     {
         Console.WriteLine(res.ToString());
     }
 }
+public partial class Program{}

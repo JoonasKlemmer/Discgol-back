@@ -83,25 +83,35 @@ public class BaseEntityRepository<TKey, TDomainEntity, TDalEntity, TDbContext>
     {
         if (userId == null)
         {
-            return await RepoDbSet.Where(e => e.Id.Equals(entity.Id)).ExecuteDeleteAsync();
+            var entityToDelete = await RepoDbSet.Where(e => e.Id.Equals(entity.Id)).ToListAsync();
+            if (entityToDelete.Count == 0) return 0;
+            RepoDbSet.RemoveRange(entityToDelete);
+            return await RepoDbContext.SaveChangesAsync();
         }
 
-        return await CreateQuery(userId)
-            .Where(e => e.Id.Equals(entity.Id))
-            .ExecuteDeleteAsync();
+        var query = CreateQuery(userId).Where(e => e.Id.Equals(entity.Id));
+        var entitiesToDelete = await query.ToListAsync();
+        if (entitiesToDelete.Count == 0) return 0;
+        RepoDbSet.RemoveRange(entitiesToDelete);
+        return await RepoDbContext.SaveChangesAsync();
     }
+
 
     public virtual async Task<int> RemoveAsync(TKey id, TKey userId = default)
     {
         if (userId == null)
         {
-            return await RepoDbSet
-                .Where(e => e.Id.Equals(id))
-                .ExecuteDeleteAsync();
+            var entityToDelete = await RepoDbSet.Where(e => e.Id.Equals(id)).ToListAsync();
+            if (entityToDelete.Count == 0) return 0;
+            RepoDbSet.RemoveRange(entityToDelete);
+            return await RepoDbContext.SaveChangesAsync();
         }
 
-        return await CreateQuery(userId)
-            .Where(e => e.Id.Equals(id)).ExecuteDeleteAsync();
+        var query = CreateQuery(userId).Where(e => e.Id.Equals(id));
+        var entitiesToDelete = await query.ToListAsync();
+        if (entitiesToDelete.Count == 0) return 0;
+        RepoDbSet.RemoveRange(entitiesToDelete);
+        return await RepoDbContext.SaveChangesAsync();
     }
     
     public async Task<TDalEntity?> FirstOrDefaultAsync(TKey id, TKey userId = default, bool noTracking = true)

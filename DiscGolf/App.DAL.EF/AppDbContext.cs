@@ -25,6 +25,24 @@ public class AppDbContext: IdentityDbContext<AppUser, AppRole, Guid, IdentityUse
     {
     }
     
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        // disable cascade delete
+        foreach (var relationship in builder.Model
+                     .GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+        {
+            relationship.DeleteBehavior = DeleteBehavior.Restrict;
+        }
+
+        if (Database.ProviderName!.Contains("InMemory"))
+        {
+            builder.Entity<Manufacturer>()
+                .Property(e => e.ManufacturerName).HasColumnName("ManufacturerName").IsRequired();
+        }
+    }
+
 
     
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())

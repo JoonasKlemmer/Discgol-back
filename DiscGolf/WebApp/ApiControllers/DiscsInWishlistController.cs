@@ -75,8 +75,9 @@ namespace WebApp.ApiControllers
         [Produces("application/json")]
         [Consumes("application/json")]
 
-        public async Task<IActionResult> PostDiscInWishlist([FromBody]WishlistInfo wishlistInfo)  
+        public async Task<OkObjectResult> PostDiscInWishlist([FromBody]WishlistInfo wishlistInfo)
         {
+            
             if (ModelState.IsValid)
             {
                 var discsInWishlist = new App.BLL.DTO.DiscsInWishlist
@@ -87,10 +88,10 @@ namespace WebApp.ApiControllers
                 };
                 _bll.DiscsInWishlists.Add(discsInWishlist);
                 await _bll.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return new OkObjectResult(discsInWishlist);
             }
             
-            return Ok(wishlistInfo);
+            return Ok(NoContent());
         }
         /// <summary>
         /// Delete disc from wishlist
