@@ -49,7 +49,7 @@ COPY WebApp/. ./WebApp/
 RUN dotnet test Base.Test
 RUN dotnet test App.Test
 
-# build output files
+# build output files 
 WORKDIR /app/WebApp
 RUN dotnet publish -c Release -o out
 
