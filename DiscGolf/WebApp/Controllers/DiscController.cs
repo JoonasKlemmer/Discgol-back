@@ -44,7 +44,7 @@ namespace WebApp.Controllers
         public async Task<IActionResult> Create()
         {
             ViewData["CategoryId"] =  new SelectList(await _bll.Categories.GetAllAsync(), "Id", "CategoryName");
-            ViewData["ManufacturerId"] = new SelectList(await _bll.Manufacturers.GetAllAsync(), "Id", "Location");
+            ViewData["ManufacturerId"] = new SelectList(await _bll.Manufacturers.GetAllAsync(), "Id", "ManufacturerName");
             return View();
         }
 
@@ -66,18 +66,17 @@ namespace WebApp.Controllers
             }
 
             if (ModelState.IsValid)
-            {   
-                Console.WriteLine("----------------1--------------------");
+            {
                 disc.Id = Guid.NewGuid();
                 _bll.Discs.Add(disc);
-                Console.WriteLine("----------------2--------------------");
+
                 await _bll.SaveChangesAsync();
-                Console.WriteLine("----------------3--------------------");
+
                 return RedirectToAction(nameof(Index));
             }
-            Console.WriteLine("----------------4--------------------");
+
             ViewData["CategoryId"] = new SelectList(await _bll.Categories.GetAllAsync(), "Id", "CategoryName", disc.CategoryId);
-            ViewData["ManufacturerId"] = new SelectList(await _bll.Manufacturers.GetAllAsync(), "Id", "Location", disc.ManufacturerId);
+            ViewData["ManufacturerId"] = new SelectList(await _bll.Manufacturers.GetAllAsync(), "Id", "ManufacturerName", disc.ManufacturerId);
             return View(disc);
         }
 
@@ -95,7 +94,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
             ViewData["CategoryId"] = new SelectList(await _bll.Categories.GetAllAsync(), "Id", "CategoryName", disc.CategoryId);
-            ViewData["ManufacturerId"] = new SelectList(await _bll.Manufacturers.GetAllAsync(), "Id", "Location", disc.ManufacturerId);
+            ViewData["ManufacturerId"] = new SelectList(await _bll.Manufacturers.GetAllAsync(), "Id", "ManufacturerName", disc.ManufacturerId);
             return View(disc);
         }
 
@@ -132,7 +131,7 @@ namespace WebApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CategoryId"] = new SelectList(await _bll.Categories.GetAllAsync(), "Id", "CategoryName", disc.CategoryId);
-            ViewData["ManufacturerId"] = new SelectList(await _bll.Manufacturers.GetAllAsync(), "Id", "Location", disc.ManufacturerId);
+            ViewData["ManufacturerId"] = new SelectList(await _bll.Manufacturers.GetAllAsync(), "Id", "ManufacturerName", disc.ManufacturerId);
             return View(disc);
         }
 
