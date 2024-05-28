@@ -24,7 +24,7 @@ public class HappyFlowTests: IClassFixture<CustomWebApplicationFactory<Program>>
 
 
 
-    private readonly JsonSerializerOptions camelCaseJsonSerializerOptions = new JsonSerializerOptions()
+    private readonly JsonSerializerOptions _camelCaseJsonSerializerOptions = new JsonSerializerOptions()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
@@ -125,15 +125,15 @@ public class HappyFlowTests: IClassFixture<CustomWebApplicationFactory<Program>>
     var discFromPageId = discWithDetails![0].DiscFromPageId;
 
     // User information
-    const string email = "renewal@test.ee";
+    const string email = "postdisc@test.ee";
     const string firstname = "First";
     const string lastname = "Last";
     const string password = "Foo.bar1";
-    const int expiresInSeconds = 3;
+    const int expiresInSeconds = 6;
 
     // Arrange: Register user and get JWT
     var jwt = await RegisterNewUser(email, password, firstname, lastname, expiresInSeconds);
-    var jwtResponse = JsonSerializer.Deserialize<JWTResponse>(jwt, camelCaseJsonSerializerOptions);
+    var jwtResponse = JsonSerializer.Deserialize<JWTResponse>(jwt, _camelCaseJsonSerializerOptions);
 
     // Create the HttpRequestMessage to get the wishlist
     var wishlistRequest = new HttpRequestMessage(HttpMethod.Get, "api/v1.0/Wishlist");
@@ -148,7 +148,7 @@ public class HappyFlowTests: IClassFixture<CustomWebApplicationFactory<Program>>
     var responseContent = await response.Content.ReadAsStringAsync();
 
     // Deserialize the response content to a list of Wishlist objects
-    var wishlistResponse = JsonSerializer.Deserialize<List<Wishlist>>(responseContent, camelCaseJsonSerializerOptions);
+    var wishlistResponse = JsonSerializer.Deserialize<List<Wishlist>>(responseContent, _camelCaseJsonSerializerOptions);
 
     // Extract wishlist ID from the response
     var wishlistId = wishlistResponse![0].Id;
@@ -167,7 +167,7 @@ public class HappyFlowTests: IClassFixture<CustomWebApplicationFactory<Program>>
     addDiscToWishlistRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwtResponse!.Jwt);
 
     // Serialize the wishlistInfo object to JSON and set it as the content of the request
-    addDiscToWishlistRequest.Content = new StringContent(JsonSerializer.Serialize(wishlistInfo, camelCaseJsonSerializerOptions), Encoding.UTF8, "application/json");
+    addDiscToWishlistRequest.Content = new StringContent(JsonSerializer.Serialize(wishlistInfo, _camelCaseJsonSerializerOptions), Encoding.UTF8, "application/json");
 
     // Send the POST request to add disc to wishlist
     var postResponse = await _client.SendAsync(addDiscToWishlistRequest);
@@ -190,20 +190,20 @@ public async Task Test_DeleteFromWishlist_ShouldReturnOk()
     var discFromPageId = discWithDetails![0].DiscFromPageId;
 
     // Register user and get JWT
-    const string email = "renewal@test.ee";
+    const string email = "delete@test.ee";
     const string firstname = "First";
     const string lastname = "Last";
     const string password = "Foo.bar1";
     const int expiresInSeconds = 3;
     var jwt = await RegisterNewUser(email, password, firstname, lastname, expiresInSeconds);
-    var jwtResponse = JsonSerializer.Deserialize<JWTResponse>(jwt, camelCaseJsonSerializerOptions);
+    var jwtResponse = JsonSerializer.Deserialize<JWTResponse>(jwt, _camelCaseJsonSerializerOptions);
 
     // Get wishlist ID
     var wishlistRequest = new HttpRequestMessage(HttpMethod.Get, "api/v1.0/Wishlist");
     wishlistRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwtResponse!.Jwt);
     var wishlistResponse = await _client.SendAsync(wishlistRequest);
     var wishlistContent = await wishlistResponse.Content.ReadAsStringAsync();
-    var wishlist = JsonSerializer.Deserialize<List<Wishlist>>(wishlistContent, camelCaseJsonSerializerOptions);
+    var wishlist = JsonSerializer.Deserialize<List<Wishlist>>(wishlistContent, _camelCaseJsonSerializerOptions);
     var wishlistId = wishlist![0].Id;
 
     // Create WishlistInfo object for the POST request
@@ -216,10 +216,10 @@ public async Task Test_DeleteFromWishlist_ShouldReturnOk()
     // Create a POST request to add disc to wishlist
     var addDiscToWishlistRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1.0/DiscsInWishlist");
     addDiscToWishlistRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwtResponse!.Jwt);
-    addDiscToWishlistRequest.Content = new StringContent(JsonSerializer.Serialize(wishlistInfo, camelCaseJsonSerializerOptions), Encoding.UTF8, "application/json");
+    addDiscToWishlistRequest.Content = new StringContent(JsonSerializer.Serialize(wishlistInfo, _camelCaseJsonSerializerOptions), Encoding.UTF8, "application/json");
     var postResponse = await _client.SendAsync(addDiscToWishlistRequest);
     var postResponseContent = await postResponse.Content.ReadAsStringAsync();
-    var addedDiscInWishlist = JsonSerializer.Deserialize<DiscsInWishlist>(postResponseContent, camelCaseJsonSerializerOptions);
+    var addedDiscInWishlist = JsonSerializer.Deserialize<DiscsInWishlist>(postResponseContent, _camelCaseJsonSerializerOptions);
     var addedDiscId = addedDiscInWishlist!.Id;
 
     // Create a DELETE request to remove the added disc from wishlist
@@ -306,7 +306,7 @@ public async Task Test_DeleteFromWishlist_ShouldReturnOk()
 
         // Arrange
         var jwt = await RegisterNewUser(email, password, firstname, lastname);
-        var jwtResponse = JsonSerializer.Deserialize<JWTResponse>(jwt, camelCaseJsonSerializerOptions);
+        var jwtResponse = JsonSerializer.Deserialize<JWTResponse>(jwt, _camelCaseJsonSerializerOptions);
 
 
         var request = new HttpRequestMessage(HttpMethod.Get, url);
@@ -341,13 +341,13 @@ public async Task Test_DeleteFromWishlist_ShouldReturnOk()
         const string firstname = "First";
         const string lastname = "Last";
         const string password = "Foo.bar1";
-        const int expiresInSeconds = 3;
+        const int expiresInSeconds = 1;
 
         const string url = "/api/v1.0/discsinwishlist";
 
         // Arrange
         var jwt = await RegisterNewUser(email, password, firstname, lastname, expiresInSeconds);
-        var jwtResponse = JsonSerializer.Deserialize<JWTResponse>(jwt, camelCaseJsonSerializerOptions);
+        var jwtResponse = JsonSerializer.Deserialize<JWTResponse>(jwt, _camelCaseJsonSerializerOptions);
         
         // let the jwt expire
         await Task.Delay((expiresInSeconds + 2) * 1000);
@@ -376,7 +376,7 @@ public async Task Test_DeleteFromWishlist_ShouldReturnOk()
         
         Assert.True(response2.IsSuccessStatusCode);
         
-        jwtResponse = JsonSerializer.Deserialize<JWTResponse>(responseContent2, camelCaseJsonSerializerOptions);
+        jwtResponse = JsonSerializer.Deserialize<JWTResponse>(responseContent2, _camelCaseJsonSerializerOptions);
 
         var request3 = new HttpRequestMessage(HttpMethod.Get, url);
         request3.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwtResponse!.Jwt);
@@ -390,17 +390,17 @@ public async Task Test_DeleteFromWishlist_ShouldReturnOk()
     [Fact(DisplayName = "POST - Log out")]
     public async Task Test_LogOut()
     {
-        const string email = "renewal@test.ee";
+        const string email = "logout@test.ee";
         const string firstname = "First";
         const string lastname = "Last";
         const string password = "Foo.bar1";
-        const int expiresInSeconds = 3;
+        const int expiresInSeconds = 2;
 
         const string url = "/api/v1.0/identity/account/logout";
 
         // Arrange
         var jwt = await RegisterNewUser(email, password, firstname, lastname, expiresInSeconds);
-        var jwtResponse = JsonSerializer.Deserialize<JWTResponse>(jwt, camelCaseJsonSerializerOptions);
+        var jwtResponse = JsonSerializer.Deserialize<JWTResponse>(jwt, _camelCaseJsonSerializerOptions);
 
         // Create the HttpRequestMessage
         var logoutRequest = new HttpRequestMessage(HttpMethod.Post, url);
@@ -415,13 +415,15 @@ public async Task Test_DeleteFromWishlist_ShouldReturnOk()
         };
 
         // Set the content of the request
-        logoutRequest.Content = new StringContent(JsonSerializer.Serialize(logoutInfo, camelCaseJsonSerializerOptions), Encoding.UTF8, "application/json");
+        logoutRequest.Content = new StringContent(JsonSerializer.Serialize(logoutInfo, _camelCaseJsonSerializerOptions), Encoding.UTF8, "application/json");
 
         // Act
         var response = await _client.SendAsync(logoutRequest);
         var responseContent = await response.Content.ReadAsStringAsync();
         // Assert
+        
         Assert.True(response.IsSuccessStatusCode);
+        
     }
     
     
@@ -469,7 +471,7 @@ public async Task Test_DeleteFromWishlist_ShouldReturnOk()
     
     private void VerifyJwtContent(string jwt, string email, string firstname, string lastname,DateTime validToIsSmallerThan)
     {
-        var jwtResponse = JsonSerializer.Deserialize<JWTResponse>(jwt,camelCaseJsonSerializerOptions);
+        var jwtResponse = JsonSerializer.Deserialize<JWTResponse>(jwt,_camelCaseJsonSerializerOptions);
         
 
 

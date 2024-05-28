@@ -20,8 +20,7 @@ namespace WebApp.Controllers
         // GET: DiscsInWishlist
         public async Task<IActionResult> Index()
         {
-            var res = await _bll.DiscsInWishlists.GetAllAsync();
-            return View(res);
+            return View(await _bll.DiscsInWishlists.GetAllAsync());
         }
 
         // GET: DiscsInWishlist/Details/5

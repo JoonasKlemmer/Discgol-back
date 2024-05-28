@@ -26,10 +26,10 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.DiscFromPage!)
+                @Html.DisplayFor(modelItem => item.DiscFromPageId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Wishlists!.WishlistName)
+                @Html.DisplayFor(modelItem => item.WishlistId)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
