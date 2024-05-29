@@ -17,7 +17,9 @@ services:
         max-file: 3
   
   app:
-    build: ./
+    build:
+      context: ./DiscGolf
+      dockerfile: Dockerfile
     container_name: discgolf-app
     ports:
       - 8080:8080

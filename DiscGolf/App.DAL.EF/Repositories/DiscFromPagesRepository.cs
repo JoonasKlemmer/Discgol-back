@@ -43,7 +43,7 @@ public class DiscFromPagesRepository : BaseEntityRepository<APPDomain.DiscFromPa
     {
         var query = CreateQuery();
         
-        query = query
+        query = query.OrderBy(c => c.Price)
             .Include(c => c.Discs)
             .ThenInclude(c => c!.Manufacturers)
             .Include(c => c.Discs!.Categories)
@@ -59,7 +59,7 @@ public class DiscFromPagesRepository : BaseEntityRepository<APPDomain.DiscFromPa
     {
         var query = CreateQuery();
         
-        query = query
+        query =query.OrderBy(c => c.Price)
             .Include(c => c.Discs)
             .ThenInclude(c => c!.Manufacturers)
             .Include(c => c.Discs!.Categories)

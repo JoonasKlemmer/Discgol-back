@@ -27,7 +27,8 @@ public class DiscsInWishlistRepository : BaseEntityRepository<APPDomain.DiscsInW
         var query = CreateQuery(userId);
     
         query = query.Where(c => c.Wishlists!.AppUserId == userId);
-        query = query
+        query = query.OrderBy(c => c.DiscFromPage!.Discs!.Name)
+            .ThenBy(c => c.DiscFromPage!.Price)
             .Include(c => c.DiscFromPage)
             .ThenInclude(c => c!.Discs).ThenInclude(c => c!.Manufacturers)
             .Include(c => c.Wishlists)
@@ -43,7 +44,7 @@ public class DiscsInWishlistRepository : BaseEntityRepository<APPDomain.DiscsInW
         var query = CreateQuery();
     
         query = query.Where(c => c.DiscFromPageId == discFromPageId &&  c.WishlistId == wishlistId );
-        query = query
+        query = query.OrderBy(c => c.DiscFromPage!.Discs!.Name)
             .Include(c => c.DiscFromPage)
             .ThenInclude(c => c!.Discs).ThenInclude(c => c!.Manufacturers)
             .Include(c => c.Wishlists)
